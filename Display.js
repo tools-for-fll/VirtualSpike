@@ -402,7 +402,7 @@ if(true)
 }
 
   // Robot
-çif(true)
+if(true)
 {
   loadLEGOModel('models/SpikeRobot.ldr', robotX, 0, robotY, robotR, true);
 }
