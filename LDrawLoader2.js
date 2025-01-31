@@ -1,6 +1,7 @@
 // Lightly modified from the version in three.js:
 // * maintain the preloaded materials when loading a new mode.
-// * manually fix a couple of LEGO inconsistencies between Studio and LDraw
+// * manually fix a couple of LEGO inconsistencies between Studio and LDraw.
+// * add a debug mode to output a file map after loading all models.
 
 import {
 	BufferAttribute,
@@ -46,6 +47,8 @@ const COLOR_SPACE_LDRAW = SRGBColorSpace;
 const _tempVec0 = new Vector3();
 const _tempVec1 = new Vector3();
 
+const captureMap = false;
+let capturedMap = [];
 
 class ConditionalLineSegments extends LineSegments {
 
@@ -577,6 +580,7 @@ class LDrawParsedCache {
 
 	async fetchData( fileName ) {
 
+		let fileNameOrig = fileName;
 		let triedLowerCase = false;
 		let locationState = FILE_LOCATION_TRY_PARTS;
 		while ( locationState !== FILE_LOCATION_NOT_FOUND ) {
@@ -638,6 +642,28 @@ class LDrawParsedCache {
 			try {
 
 				const text = await fileLoader.loadAsync( subobjectURL );
+
+				if( captureMap && ( triedLowerCase !== false || ( locationState - 1 ) !== FILE_LOCATION_TRY_PARTS ) ) {
+
+					if ( fileNameOrig.substring( 0, 2 ) === "p/" ) {
+
+						capturedMap[ fileNameOrig.substring( 2 ) ] = "../" + fileNameOrig;
+
+					} else if ( !fileNameOrig.substring( 0, 2 ) === "s/" ) {
+
+						capturedMap[ fileNameOrig ] = "../parts/" + fileNameOrig;
+
+					} else if ( fileNameOrig.substring( 0, 8 ) === "parts/s/" ) {
+
+						capturedMap[ fileNameOrig.substring( 6 ) ] = "../" + fileNameOrig;
+
+					} else {
+
+						capturedMap[ fileNameOrig ] = "../p/" + fileNameOrig;
+
+					}
+				}
+
 				return text;
 
 			} catch ( _ ) {
@@ -2381,6 +2407,12 @@ class LDrawLoader2 extends Loader {
 		} );
 
 		model.userData.numBuildingSteps = stepNumber + 1;
+
+	}
+
+	getFileMap() {
+
+		return capturedMap;
 
 	}
 

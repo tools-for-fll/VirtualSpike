@@ -3,24 +3,26 @@
 // Open Source Software: you can modify and/or share it under the terms of the
 // BSD license file in the root directory of this project.
 
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { LDrawLoader2 } from "./LDrawLoader2.js";
+import { LDrawUtils } from "three/addons/utils/LDrawUtils.js";
+import { LDrawConditionalLineMaterial } from "three/addons/materials/LDrawConditionalLineMaterial.js";
 
-import { LDrawLoader2 } from './LDrawLoader2.js';
-import { LDrawUtils } from 'three/addons/utils/LDrawUtils.js';
-import { LDrawConditionalLineMaterial } from 'three/addons/materials/LDrawConditionalLineMaterial.js';
+import { AnaglyphEffect } from "three/addons/effects/AnaglyphEffect.js";
 
-import { AnaglyphEffect } from 'three/addons/effects/AnaglyphEffect.js';
+import { fileMap} from "./LDrawMap.js";
 
 let container;
 
 let camera, scene, renderer, effect, controls;
 
 let lDrawLoader;
+
+let loadQueue = [];
 
 let count = 0, loaded = 0;
 
@@ -61,35 +63,80 @@ lduToInch(ldu)
 function
 loadLEGOModel(model, x, y, z, r, c = false)
 {
+  let item;
+
+  function
+  loadDone(group)
+  {
+    group = LDrawUtils.mergeObject(group);
+
+    group.position.x = item.x;
+    group.position.y = item.y + inchToLDU(0.5);
+    group.position.z = item.z;
+    group.rotation.x = Math.PI;
+    group.rotation.y = item.r;
+
+    group.scale.x = 0.1;
+    group.scale.y = 0.1;
+    group.scale.z = 0.1;
+
+    scene.add(group);
+
+    if(item.c)
+    {
+      robot = group;
+    }
+
+    loaded++;
+    updateProgressBar();
+    if(loaded == count)
+    {
+      let map = lDrawLoader.getFileMap();
+      let keys = Reflect.ownKeys(map);
+
+      if(keys.length != 1)
+      {
+        keys.sort();
+
+        let string = "";
+
+        for(let i = 0; i < keys.length; i++)
+        {
+          if(keys[i] !== "length")
+          {
+            string += "fileMap[\"" + keys[i] + "\"] = \"" + map[keys[i]] +
+                      "\";\n";
+          }
+        }
+
+        console.log(string);
+      }
+
+      hideProgressBar();
+    }
+    else
+    {
+      item = loadQueue.pop();
+      lDrawLoader.load(item.model, loadDone);
+    }
+  }
+
   count++;
-  lDrawLoader.load(model, function (group)
-                          {
-                            group = LDrawUtils.mergeObject(group);
 
-                            group.position.x = x;
-                            group.position.y = y + inchToLDU(0.5);
-                            group.position.z = z;
-                            group.rotation.x = Math.PI;
-                            group.rotation.y = r;
+  loadQueue.push({
+                   model: model,
+                   x: x,
+                   y: y,
+                   z: z,
+                   r: r,
+                   c: c
+                 });
 
-                            group.scale.x = 0.1;
-                            group.scale.y = 0.1;
-                            group.scale.z = 0.1;
-
-                            scene.add(group);
-
-                            if(c)
-                            {
-                              robot = group;
-                            }
-
-                            loaded++;
-                            updateProgressBar();
-                            if(loaded == count)
-                            {
-                              hideProgressBar();
-                            }
-                          });
+  if(count == 1)
+  {
+    item = loadQueue.pop();
+    lDrawLoader.load(item.model, loadDone);
+  }
 }
 
 function
@@ -140,11 +187,13 @@ showProgressBar()
   $("#load_progress span")[0].innerText = 'Loading...';
   $("#load_progress")[0].showModal();
   $("window").trigger("resize");
+  //console.log("Start: " + Date.now());
 }
 
 function
 hideProgressBar()
 {
+  //console.log("End: " + Date.now());
   $("#load_progress")[0].close();
 }
 
@@ -256,6 +305,7 @@ init()
   lDrawLoader.smoothNormals = true;
   lDrawLoader.setPartsLibraryPath("ldraw/");
   lDrawLoader.preloadMaterials("ldraw/LDConfig.ldr");
+  lDrawLoader.setFileMap(fileMap);
 
   showProgressBar();
 

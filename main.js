@@ -29,9 +29,10 @@ init()
   $("#btn_robot").on("click", Display.setCameraRobot);
   $("#btn_2d").on("click", Display.setView2D);
   $("#btn_3d").on("click", Display.setView3D);
-  $("#btn_config").on("click", btnConfig);
-  $("#btn_about").on("click", btnAbout);
   $("#btn_showcode").on("click", btnShowCode);
+  $("#btn_config").on("click", btnConfig);
+  $("#btn_fullscreen").on("click", btnFullscreen);
+  $("#btn_about").on("click", btnAbout);
 
   startX = 27.4;
   startY = 18.25;
@@ -215,9 +216,36 @@ btnRandom()
 }
 
 function
+btnShowCode()
+{
+  if($(".frame").hasClass("show-editor"))
+  {
+    $(".frame").removeClass("show-editor");
+  }
+  else
+  {
+    $(".frame").addClass("show-editor");
+    Editor.focus();
+  }
+}
+
+function
 btnConfig()
 {
   console.log("config");
+}
+
+function
+btnFullscreen()
+{
+  if(!document.fullscreenElement)
+  {
+    document.documentElement.requestFullscreen();
+  }
+  else
+  {
+    document.exitFullscreen();
+  }
 }
 
 function
@@ -261,48 +289,49 @@ btnAbout()
 }
 
 function
-btnShowCode()
-{
-  if($(".frame").hasClass("show-editor"))
-  {
-    $(".frame").removeClass("show-editor");
-  }
-  else
-  {
-    $(".frame").addClass("show-editor");
-    Editor.focus();
-  }
-}
-
-function
 onKeyUp(e)
 {
-  // See if Ctrl-Shift-F was pressed.
-  if(((e.key == 'f') || (e.key == 'F')) && (e.ctrlKey == true) &&
-     (e.shiftKey == true))
+  // See if Ctrl and Shift are pressed.
+  if((e.altKey == false) && (e.ctrlKey == true) && (e.shiftKey == true))
   {
-    // Toggle the full screen state of the window.
-    if(!document.fullscreenElement)
+    // See if Ctrl-Shift-2 was pressed.
+    if(e.key == '2')
     {
-      document.documentElement.requestFullscreen();
+      // Switch to 2D viewing.
+      Display.setView2D();
+
+      // Do not allow this key event to further propagated.
+      e.stopPropagation();
     }
-    else
+
+    // See if Ctrl-Shift-3 was pressed.
+    if(e.key == '3')
     {
-      document.exitFullscreen();
+      // Switch to 3D viewing.
+      Display.setView3D();
+
+      // Do not allow this key event to further propagated.
+      e.stopPropagation();
     }
 
-    // Do not allow this key event to further propagated.
-    e.stopPropagation();
-  }
+    // See if Ctrl-Shift-C was pressed.
+    if((e.key == 'c') || (e.key == 'C'))
+    {
+      // Toggle the code window.
+      btnShowCode();
 
-  // See if Ctrl-Shift-C was pressed.
-  if(((e.key == 'c') || (e.key == 'C')) && (e.ctrlKey == true) &&
-     (e.shiftKey == true))
-  {
-    // Toggle the code window.
-    btnShowCode();
+      // Do not allow this key event to further propagated.
+      e.stopPropagation();
+    }
 
-    // Do not allow this key event to further propagated.
-    e.stopPropagation();
+    // See if Ctrl-Shift-F was pressed.
+    if((e.key == 'f') || (e.key == 'F'))
+    {
+      // Toggle the full screen state of the window.
+      btnFullscreen();
+
+      // Do not allow this key event to further propagated.
+      e.stopPropagation();
+    }
   }
 }
