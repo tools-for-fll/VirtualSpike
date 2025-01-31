@@ -1,0 +1,316 @@
+/*
+ * Copyright (c) 2025 Brian Kircher
+ *
+ * Open Source Software: you can modify and/or share it under the terms of the
+ * BSD license file in the root directory of this project.
+ */
+
+body
+{
+  margin: 0;
+}
+
+.frame
+{
+  display: grid;
+  grid-template-columns: 1fr 0px;
+  grid-template-rows: 3em 1fr 3em;
+  height: 100dvh;
+  width: 100dvw;
+
+  &.show-editor
+  {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+#controls
+{
+  align-items: center;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  overflow-x: scroll;
+
+  button
+  {
+    background-color: #000000;
+    border-color: #00ff00;
+    border-width: 2px;
+    color: #00ff00;
+    height: 2em;
+    margin: 0 0 0 10px;
+    padding: 1px;
+    width: 2em;
+
+    i
+    {
+      font-size: 1.5em;
+    }
+
+    img
+    {
+      height: calc(2em - 6px);
+      width: calc(2em - 6px);
+    }
+  }
+
+  label
+  {
+    color: #00ff00;
+    font-size: 1.5em;
+    margin: 0 0 0 10px;
+  }
+
+  span
+  {
+    border-left: 1px solid #00ff00;
+    height: 2em;
+    margin: 0 0 0 10px;
+  }
+}
+
+#field
+{
+  grid-column: 1;
+  grid-row: 2;
+  overflow: hidden;
+}
+
+#editor
+{
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  grid-template-rows: 2em 1fr;
+  overflow: hidden;
+
+  .nav
+  {
+    background-color: #001f00;
+    display: flex;
+    grid-row: 1;
+    margin: 0;
+    overflow-x: scroll;
+    padding: 0;
+
+    li
+    {
+      align-items: center;
+      background-color: #001f00;
+      border-left: 1px solid #007f00;
+      border-right: 1px solid #007f00;
+      border-bottom: 3px solid #00000000;
+      color: #00bf00;
+      display: flex;
+      padding: 0 10px;
+
+      button
+      {
+        background-color: #001f00;
+        border: 0;
+        color: #00bf00;
+        margin: 0 5px;
+        padding: 5px;
+
+        &:hover
+        {
+          background-color: #3f3f3f;
+        }
+      }
+
+      &.active
+      {
+        border-bottom: 3px solid #007f00;
+        color: #00ff00;
+
+        button
+        {
+          color: #00ff00;
+        }
+      }
+    }
+  }
+
+  #ace_editor
+  {
+    grid-row: 2;
+  }
+}
+
+#status
+{
+  align-items: center;
+  background-color: #001f00;
+  color: #00ff00;
+  display: flex;
+  grid-column: 1 / span 2;
+  grid-row: 3;
+  overflow-x: scroll;
+  padding: 0 10px;
+}
+
+#forkme
+{
+  display: none;
+
+  img
+  {
+    height: 124px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 124px;
+    z-index: 10000;
+  }
+}
+
+dialog
+{
+  background-color: #000000;
+  border: 1px solid #00ff00;
+  border-radius: 1em;
+  color: #00ff00;
+  max-height: 80%;
+  max-width: 80%;
+  overflow-y: scroll;
+  padding: 1em;
+
+  &::backdrop
+  {
+    background-color: #000000c0;
+  }
+
+  a
+  {
+    color: #00bf00;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  button
+  {
+    background-color: #000000;
+    border-color: #00ff00;
+    color: #00ff00;
+  }
+}
+
+#about
+{
+  div
+  {
+    align-items: center;
+    display: grid;
+    grid-template-rows: 4em 2em 2em 2em;
+
+    .title
+    {
+      font-size: 2em;
+      font-weight: bold;
+      grid-row: 1;
+      text-align: center;
+    }
+
+    .copyright
+    {
+      grid-row: 2;
+      text-align: center;
+    }
+
+    .powered
+    {
+      font-size: 1em;
+      grid-row: 3;
+      text-align: center;
+
+      a
+      {
+        color: #3fbf3f;
+      }
+    }
+
+    .buttons
+    {
+      display: flex;
+      grid-row: 4;
+      justify-content: center;
+
+      button
+      {
+        background-color: #000000;
+        border-color: #00ff00;
+        color: #00ff00;
+      }
+    }
+  }
+}
+
+.license
+{
+  hr
+  {
+    border: 1px solid #00ff00;
+    margin: 0 0 1em 0;
+  }
+
+  p
+  {
+    margin: 0 0 1em 0;
+  }
+}
+
+#load_progress
+{
+  border: 1px solid #00ff00;
+  border-radius: 1em;
+  padding: 1em;
+
+  span
+  {
+    background-color: #00000000;
+    border: 0;
+    color: #00ff00;
+    font-size: 3em;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.popup
+{
+  div
+  {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+
+    .message
+    {
+      grid-row: 1;
+    }
+
+    .buttons
+    {
+      display: flex;
+      grid-row: 2;
+      justify-content: center;
+      margin-top: 10px;
+
+      .danger
+      {
+        background-color: #ff0000;
+        color: #ffffff;
+        margin: 0 10px;
+      }
+
+      .safe
+      {
+        background-color: #00ff00;
+        color: #000000;
+        margin: 0 10px;
+      }
+    }
+  }
+}
