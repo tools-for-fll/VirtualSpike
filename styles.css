@@ -8,6 +8,7 @@
 body
 {
   margin: 0;
+  position: fixed;
 }
 
 .frame
@@ -145,11 +146,67 @@ body
   align-items: center;
   background-color: #001f00;
   color: #00ff00;
-  display: flex;
+  display: grid;
   grid-column: 1 / span 2;
   grid-row: 3;
-  overflow-x: scroll;
-  padding: 0 10px;
+  grid-template-columns: repeat(7, 1fr);
+
+  img
+  {
+    height: 2em;
+    width: 2em;
+    padding: 0 0.5em;
+  }
+
+  span
+  {
+    font-size: 1.5em;
+  }
+
+  .sensor
+  {
+    align-items: center;
+    border: 1px solid #00ff00;
+    display: flex;
+    height: 2em;
+    margin: 2px 4px;
+    padding: 2px 4px;
+  }
+
+  .gyro
+  {
+    grid-column: 1;
+  }
+
+  .porta
+  {
+    grid-column: 2;
+  }
+
+  .portb
+  {
+    grid-column: 3;
+  }
+
+  .portc
+  {
+    grid-column: 4;
+  }
+
+  .portd
+  {
+    grid-column: 5;
+  }
+
+  .porte
+  {
+    grid-column: 6;
+  }
+
+  .portf
+  {
+    grid-column: 7;
+  }
 }
 
 #forkme

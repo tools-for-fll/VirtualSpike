@@ -6,12 +6,25 @@
 import "./jquery.js";
 import * as Display from "./Display.js";
 import * as Editor from "./Editor.js";
+import * as sim from "./sim.js";
+import * as hubs from "./pybricks/hubs.js";
+import * as parameters from "./pybricks/parameters.js";
+import * as pupdevices from "./pybricks/pupdevices.js";
+import * as robotics from "./pybricks/robotics.js";
+import * as tools from "./pybricks/tools.js";
+import * as umath from "./micropython/umath.js";
 
-let startX, startY, startR;
+let deviceType = [];
+let deviceView = [];
 
-let robotS, robotX, robotY, robotR;
+let interp = null;
 
-let robotMode = 0;
+const scope =
+{
+  print: (...args) => { console.log(...args); },
+  range: range,
+  simDone: btnStop
+};
 
 $("document").ready(init);
 
@@ -34,98 +47,216 @@ init()
   $("#btn_fullscreen").on("click", btnFullscreen);
   $("#btn_about").on("click", btnAbout);
 
-  startX = 27.4;
-  startY = 18.25;
-  startR = 0;
+  $(".porta").on("click", () => btnPortView(parameters.Port.A));
+  $(".portb").on("click", () => btnPortView(parameters.Port.B));
+  $(".portc").on("click", () => btnPortView(parameters.Port.C));
+  $(".portd").on("click", () => btnPortView(parameters.Port.D));
+  $(".porte").on("click", () => btnPortView(parameters.Port.E));
+  $(".portf").on("click", () => btnPortView(parameters.Port.F));
 
-  robotS = 0;
-  robotX = startX;
-  robotY = startY;
-  robotR = startR;
+  Editor.init();
+  Editor.robotReset(btnReset);
 
-  Display.setRobotPosition(robotX, robotY, robotR);
+  btnReset();
+
   Display.setStepFunction(step);
   Display.init();
   Display.setCameraOverhead();
 
-  Editor.init();
+  interp = window.jspython.jsPython();
+
+  const AVAILABLE_PACKAGES =
+  {
+    "pybricks.hubs": hubs,
+    "pybricks.parameters": parameters,
+    "pybricks.pupdevices": pupdevices,
+    "pybricks.robotics": robotics,
+    sim,
+    "pybricks.tools": tools,
+    umath
+  };
+  interp.registerPackagesLoader((packageName) =>
+                                {
+                                  return(AVAILABLE_PACKAGES[packageName]);
+                                });
 
   $(document).on("keyup", onKeyUp);
 }
 
+/**
+ * Updates the state of the robot based on execution of the robot script.
+ */
 function
 step()
 {
-  if(robotMode == 0)
+  // Update the state of the robot simulator.
+  sim.step();
+
+  // Update the gyro sensor in the status line.
+  if(hubs._hub !== null)
   {
+    let html = hubs._hub.imu.heading().toFixed(0) + " &deg;";
+    $("#status .gyro span:eq(1)").html(html);
   }
-  else if(robotS == 0)
+
+  // Loop through the ports.
+  for(let port = parameters.Port.A; port <= parameters.Port.F; port++)
   {
-    robotY -= 0.1;
-    if(robotY <= -10)
+    let classId = ".port" + ("abcdef".substring(port, port + 1));
+    let portName = "ABCDEF".substring(port, port + 1);
+    let type = deviceType[port];
+    let html;
+
+    // See if the device type on this port has changed.
+    if(pupdevices.deviceType[port] != type)
     {
-      robotR = 360;
-      robotS = 1;
+      let img;
+
+      // Update the device type for this port.
+      type = deviceType[port] = pupdevices.deviceType[port];
+
+      // Reset the device view for this port.
+      deviceView[port] = 0;
+
+      // Get the device image based on the device type.
+      if(type === pupdevices.DeviceType.ColorSensor)
+      {
+        img = "images/ColorSensor.png";
+      }
+      else if(type === pupdevices.DeviceType.ForceSensor)
+      {
+        img = "images/ForceSensor.png";
+      }
+      else if(type === pupdevices.DeviceType.Motor)
+      {
+        img = "images/Motor.png";
+      }
+      else if(type === pupdevices.DeviceType.UltrasonicSensor)
+      {
+        img = "images/UltrasonicSensor.png";
+      }
+      else
+      {
+        img = "";
+      }
+
+      // Update the device display on the status line.
+      if(img === "")
+      {
+        $(classId).html("<span>" + portName + ":");
+      }
+      else
+      {
+        $(classId).html("<span>" + portName + ":</span><img src='" + img +
+                        "' /><span></span>");
+      }
+    }
+
+    // See if this port has a color sensor attached.
+    if(type === pupdevices.DeviceType.ColorSensor)
+    {
+      // Get the updated value of the color sensor, based on the display mode.
+      if(deviceView[port] === 0)
+      {
+        html = pupdevices.devicesUsed[port].reflection() + " rfl";
+      }
+      else if(deviceView[port] === 1)
+      {
+        html = pupdevices.devicesUsed[port].ambient() + " amb";
+      }
+      else
+      {
+        let hsv = pupdevices.devicesUsed[port].hsv(true);
+        html = hsv[0] + "," + hsv[1] + "," + hsv[2];
+      }
+
+      // Update the color sensor value for this port on the status line.
+      $(classId + " span:eq(1)").html(html);
+    }
+
+    // Otherwise, see if this is a force sensor.
+    else if(type === pupdevices.DeviceType.ForceSensor)
+    {
+      // Get the updated value of the force sensor, based on the display mode.
+      if(deviceView[port] === 0)
+      {
+        html = pupdevices.devicesUsed[port].force() + " N";
+      }
+      else if(deviceView[port] === 1)
+      {
+        html = pupdevices.devicesUsed[port].distance() + " mm";
+      }
+      else if(deviceView[port] === 2)
+      {
+        html = (pupdevices.devicesUsed[port].pressed() ? "true" : "false") +
+               " p";
+      }
+      else
+      {
+        html = (pupdevices.devicesUsed[port].touched() ? "true" : "false") +
+               " t";
+      }
+
+      // Update the force sensor value for this port on the status line.
+      $(classId + " span:eq(1)").html(html);
+    }
+
+    // Otherwise, see if this is a motor.
+    else if(type === pupdevices.DeviceType.Motor)
+    {
+      // Get the updated value of the motor, based on the display mode.
+      if(deviceView[port] === 0)
+      {
+        html = pupdevices.devicesUsed[port].angle().toFixed(0) + " &deg;";
+      }
+      else
+      {
+        html = (pupdevices.devicesUsed[port].angle() / 360.0).toFixed(3);
+      }
+
+      // Update the motor value for this port on the status line.
+      $(classId + " span:eq(1)").html(html);
+    }
+
+    // Otherwise, see if this is an ultrasonic sensor.
+    else if(type === pupdevices.DeviceType.UltrasonicSensor)
+    {
+      // Get the updated value of the ultrasonic sensor, based on the display
+      // mode.
+      html = pupdevices.devicesUsed[port].distance() + " mm";
+
+      // Update the motor value for this port on the status line.
+      $(classId + " span:eq(1)").html(html);
     }
   }
-  else if(robotS == 1)
+}
+
+function
+range(start, end = NaN, step = 1)
+{
+  let arr = [];
+  const isStopNaN = isNaN(end);
+  end = isStopNaN ? start : end;
+  start = isStopNaN ? 0 : start;
+
+  console.log("start: " + start + " end: " + end + " step: " + step);
+
+  if(step > 0)
   {
-    robotR -= 3;
-    if(robotR == 270)
+    for(let i = start; i < end; i += step)
     {
-      robotS = 2;
+      arr.push(i);
     }
   }
-  else if(robotS == 2)
+  else
   {
-    robotX -= 0.1;
-    if(robotX <= -25)
+    for(let i = start; i > end; i += step)
     {
-      robotS = 3;
-    }
-  }
-  else if(robotS == 3)
-  {
-    robotR -= 3;
-    if(robotR == 180)
-    {
-      robotS = 4;
-    }
-  }
-  else if(robotS == 4)
-  {
-    robotY += 0.1;
-    if(robotY > 9)
-    {
-      robotS = 5;
-    }
-  }
-  else if(robotS == 5)
-  {
-    robotR -= 3;
-    if(robotR == 90)
-    {
-      robotS = 6;
-    }
-  }
-  else if(robotS == 6)
-  {
-    robotX += 0.1;
-    if(robotX > 25)
-    {
-      robotS = 7;
-    }
-  }
-  else if(robotS == 7)
-  {
-    robotR -= 3;
-    if(robotR == 0)
-    {
-      robotS = 0;
+      arr.push(i);
     }
   }
 
-  Display.setRobotPosition(robotX, robotY, robotR);
+  return(arr);
 }
 
 function
@@ -182,31 +313,42 @@ btnExport()
   Editor.bufferSaved();
 }
 
-function
+async function
 btnPlayPause()
 {
-  robotMode ^= 1;
+  let button = $("#btn_playpause i");
 
-  if(robotMode == 0)
+  if(button.hasClass("fa-pause"))
   {
-    $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
+    btnStop();
   }
   else
   {
     $("#btn_playpause i").removeClass("fa-play").addClass("fa-pause");
+
+    let source = Editor.bufferContents() + "\nsimDone()";
+
+    sim.reset(source, false);
+
+    source = source.replace(/\ndef /g, "\nasync def ");
+
+    await interp.evaluate(source, scope).catch((error) => console.log(error));
+    // XYZZY present error to user in a helpful manner
   }
+}
+
+function
+btnStop()
+{
+  $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
 }
 
 function
 btnReset()
 {
-  robotS = 0;
-  robotX = startX;
-  robotY = startY;
-  robotR = startR;
-  robotMode = 0;
-  Display.setRobotPosition(robotX, robotY, robotR);
-  $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
+  sim.reset(Editor.bufferContents(), true);
+
+  btnStop();
 }
 
 function
@@ -278,6 +420,9 @@ btnAbout()
   $("#about #btn_three").on("click", () => showLicense("#three_license"));
   $("#about #btn_ace").off("click");
   $("#about #btn_ace").on("click", () => showLicense("#ace_license"));
+  $("#about #btn_jspython").off("click");
+  $("#about #btn_jspython").on("click",
+                               () => showLicense("#jspython_license"));
   $("#about #btn_ldraw").off("click");
   $("#about #btn_ldraw").on("click", () => showLicense("#ldraw_license"));
   $("#about #btn_jquery").off("click");
@@ -289,49 +434,55 @@ btnAbout()
 }
 
 function
+btnPortView(port)
+{
+  if(deviceType[port] === pupdevices.DeviceType.ColorSensor)
+  {
+    deviceView[port]++;
+    if(deviceView[port] === 3)
+    {
+      deviceView[port] = 0;
+    }
+  }
+  else if(deviceType[port] === pupdevices.DeviceType.ForceSensor)
+  {
+    deviceView[port] = (deviceView[port] + 1) & 3;
+  }
+  else if(deviceType[port] === pupdevices.DeviceType.Motor)
+  {
+    deviceView[port] ^= 1;
+  }
+  else if(deviceType[port] === pupdevices.DeviceType.UltrasonicSensor)
+  {
+  }
+}
+
+function
 onKeyUp(e)
 {
-  // See if Ctrl and Shift are pressed.
-  if((e.altKey == false) && (e.ctrlKey == true) && (e.shiftKey == true))
+  // The key presses to look for and the handler to call when they are seen.
+  const handlers =
   {
-    // See if Ctrl-Shift-2 was pressed.
-    if(e.key == '2')
-    {
-      // Switch to 2D viewing.
-      Display.setView2D();
+    "2": Display.setView2D,
+    "3": Display.setView3D,
+    "C": btnShowCode,
+    "c": btnShowCode,
+    "F": btnFullscreen,
+    "f": btnFullscreen,
+    "P": btnPlayPause,
+    "p": btnPlayPause,
+    "R": btnReset,
+    "r": btnReset
+  };
 
-      // Do not allow this key event to further propagated.
-      e.stopPropagation();
-    }
+  // See if Ctrl, Option/Alt, and one of the defined keys are pressed.
+  if((e.altKey == false) && (e.ctrlKey == true) && (e.shiftKey == true) &&
+     (handlers[e.key] !== undefined))
+  {
+    // Call the handler for this key.
+    handlers[e.key]();
 
-    // See if Ctrl-Shift-3 was pressed.
-    if(e.key == '3')
-    {
-      // Switch to 3D viewing.
-      Display.setView3D();
-
-      // Do not allow this key event to further propagated.
-      e.stopPropagation();
-    }
-
-    // See if Ctrl-Shift-C was pressed.
-    if((e.key == 'c') || (e.key == 'C'))
-    {
-      // Toggle the code window.
-      btnShowCode();
-
-      // Do not allow this key event to further propagated.
-      e.stopPropagation();
-    }
-
-    // See if Ctrl-Shift-F was pressed.
-    if((e.key == 'f') || (e.key == 'F'))
-    {
-      // Toggle the full screen state of the window.
-      btnFullscreen();
-
-      // Do not allow this key event to further propagated.
-      e.stopPropagation();
-    }
+    // Do not allow this key event to further propagated.
+    e.stopPropagation();
   }
 }

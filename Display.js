@@ -455,6 +455,8 @@ if(true)
 if(true)
 {
   loadLEGOModel('models/SpikeRobot.ldr', robotX, 0, robotY, robotR, true);
+  //loadLEGOModel('models/SpikeRobot-sweeper.ldr', robotX, 0, robotY, robotR, true);
+  //loadLEGOModel('models/2025/Precision.ldr', robotX, 0, robotY, robotR, true);
 }
 
 if(count == 0)
@@ -520,6 +522,9 @@ setCameraRobot()
 export function
 setRobotPosition(x, y, r)
 {
+  x = x - 46.5;
+  y = 22.5 - y;
+
   robotX = inchToLDU(x);
   robotY = inchToLDU(y);
   robotR = r;
@@ -528,13 +533,13 @@ setRobotPosition(x, y, r)
   {
     robot.position.x = robotX;
     robot.position.z = robotY;
-    robot.rotation.y = toRadians(robotR);
+    robot.rotation.y = toRadians(90 - robotR);
   }
 
   if(cameraMode == 1)
   {
-    var cx = robotX + (birdD * Math.sin(toRadians(-robotR)));
-    var cy = robotY + (birdD * Math.cos(toRadians(-robotR)));
+    var cx = robotX + (birdD * Math.cos(toRadians(180 - robotR)));
+    var cy = robotY + (birdD * Math.sin(toRadians(180 - robotR)));
 
     controls.reset();
     camera.position.set(cx, inchToLDU(18), cy);
@@ -545,10 +550,10 @@ setRobotPosition(x, y, r)
 
   if(cameraMode == 2)
   {
-    var cx = robotX + (eyeX * Math.sin(toRadians(-robotR)));
-    var cy = robotY + (eyeX * Math.cos(toRadians(-robotR)));
-    var lx = robotX - (eyeD * Math.sin(toRadians(-robotR)));
-    var ly = robotY - (eyeD * Math.cos(toRadians(-robotR)));
+    var cx = robotX + (eyeX * Math.cos(toRadians(180 - robotR)));
+    var cy = robotY + (eyeX * Math.sin(toRadians(180 - robotR)));
+    var lx = robotX - (eyeD * Math.cos(toRadians(180 - robotR)));
+    var ly = robotY - (eyeD * Math.sin(toRadians(180 - robotR)));
 
     controls.reset();
     camera.position.set(cx, eyeY, cy);

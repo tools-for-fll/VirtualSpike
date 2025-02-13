@@ -22,6 +22,8 @@ license file in the root directory of this project.
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspython-interpreter@2.1.16/dist/jspython-interpreter.min.js"
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="importmap">
     {
       "imports":
@@ -45,10 +47,10 @@ license file in the root directory of this project.
           <i class="fa fa-download"></i>
         </button>
         <span>&#8203;</span>
-        <button id="btn_playpause" title="Play/Pause">
+        <button id="btn_playpause" title="Play/Pause (Ctrl-Shift-P)">
           <i class="fa fa-play"></i>
         </button>
-        <button id="btn_reset" title="Reset">
+        <button id="btn_reset" title="Reset (Ctrl-Shift-R)">
           <i class="fa fa-refresh"></i>
         </button>
         <button id="btn_random" title="Randomize">
@@ -98,7 +100,31 @@ license file in the root directory of this project.
         </ul>
         <div id="ace_editor"></div>
       </div>
-      <div id="status"><span>Status goes here</span></div>
+      <div id="status">
+        <div class="sensor gyro">
+          <span>I:</span>
+          <img src="images/Gyro.png" />
+          <span>0 &deg;</span>
+        </div>
+        <div class="sensor porta">
+          <span>A:</span>
+        </div>
+        <div class="sensor portb">
+          <span>B:</span>
+        </div>
+        <div class="sensor portc">
+          <span>C:</span>
+        </div>
+        <div class="sensor portd">
+          <span>D:</span>
+        </div>
+        <div class="sensor porte">
+          <span>E:</span>
+        </div>
+        <div class="sensor portf">
+          <span>F:</span>
+        </div>
+      </div>
     </div>
     <div id="forkme">
       <a href="https://github.com/bckircher/VirtualSpike" target="_blank">
@@ -109,10 +135,13 @@ license file in the root directory of this project.
     <dialog id="about">
       <div>
         <span class="title">VirtualSpike</span>
-        <span class="copyright">Copyright &copy; 2025 Brian Kircher - <a id="btn_license">License</a></span>
+        <span class="copyright">
+          Copyright &copy; 2025 Brian Kircher - <a id="btn_license">License</a>
+        </span>
         <span class="powered">
           Powered by: <a id="btn_three">three.js</a>, <a id="btn_ace">Ace</a>,
-          <a id="btn_ldraw">LDraw</a>, <a id="btn_jquery">jQuery</a>, and
+          <a id="btn_jspython">JSPython</a>, <a id="btn_ldraw">LDraw</a>,
+          <a id="btn_jquery">jQuery</a>, and
           <a href="https://fontawesome.com/" target="_blank">FontAwesome 4.7</a>.
         </span>
         <span class="buttons">
@@ -1086,6 +1115,55 @@ license file in the root directory of this project.
           ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
           CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
           SOFTWARE.
+        </p>
+        <button>OK</button>
+      </div>
+    </dialog>
+    <dialog id="jspython_license">
+      <div class="license">
+        <p>
+          BSD 3-Clause License
+        </p>
+        <p>
+          Copyright (c) 2020, FalconSoft Ltd
+          <br>
+          All rights reserved.
+        </p>
+        <p>
+          Redistribution and use in source and binary forms, with or without
+          modification, are permitted provided that the following conditions
+          are met:
+          <ol>
+            <li>
+              Redistributions of source code must retain the above copyright
+              notice, this list of conditions and the following disclaimer.
+            </li>
+            <li>
+              Redistributions in binary form must reproduce the above copyright
+              notice, this list of conditions and the following disclaimer in
+              the documentation and/or other materials provided with the
+              distribution.
+            </li>
+            <li>
+              Neither the name of the copyright holder nor the names of its
+              contributors may be used to endorse or promote products derived
+              from this software without specific prior written permission.
+            </li>
+          </ol>
+        </p>
+        <p>
+          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+          "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+          LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+          A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+          HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+          INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+          BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+          OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+          AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+          LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+          WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+          POSSIBILITY OF SUCH DAMAGE.
         </p>
         <button>OK</button>
       </div>
