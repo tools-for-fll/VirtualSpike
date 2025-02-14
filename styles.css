@@ -7,6 +7,7 @@
 
 body
 {
+  background-color: #000000;
   margin: 0;
   position: fixed;
 }
@@ -14,15 +15,9 @@ body
 .frame
 {
   display: grid;
-  grid-template-columns: 1fr 0px;
   grid-template-rows: 3em 1fr 3em;
   height: 100dvh;
   width: 100dvw;
-
-  &.show-editor
-  {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 #controls
@@ -31,9 +26,9 @@ body
   background-color: #000000;
   color: #ffffff;
   display: flex;
-  grid-column: 1 / span 2;
   grid-row: 1;
   overflow-x: scroll;
+  width: 100%;
 
   button
   {
@@ -73,71 +68,137 @@ body
   }
 }
 
-#field
-{
-  grid-column: 1;
-  grid-row: 2;
-  overflow: hidden;
-}
-
-#editor
+#content
 {
   display: grid;
-  grid-column: 2;
   grid-row: 2;
-  grid-template-rows: 2em 1fr;
+  grid-template-columns: 1fr 12px 1fr;
   overflow: hidden;
 
-  .nav
+  #field
   {
-    background-color: #001f00;
-    display: flex;
-    grid-row: 1;
-    margin: 0;
-    overflow-x: scroll;
-    padding: 0;
+    grid-column: 1;
+    overflow: hidden;
+  }
 
-    li
+  #vsizer
+  {
+    background-color: #005f00;
+    border-left: 2px solid #007f00;
+    border-right: 2px solid #003f00;
+    cursor: col-resize;
+    grid-column: 2;
+  }
+
+  #dev
+  {
+    display: grid;
+    flex: 1;
+    grid-column: 3;
+    grid-template-rows: 3fr 12px 1fr;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+
+    #editor
     {
-      align-items: center;
-      background-color: #001f00;
-      border-left: 1px solid #007f00;
-      border-right: 1px solid #007f00;
-      border-bottom: 3px solid #00000000;
-      color: #00bf00;
-      display: flex;
-      padding: 0 10px;
+      display: grid;
+      grid-row: 1;
+      grid-template-rows: 2em 1fr;
+      overflow: hidden;
 
-      button
+      .nav
       {
         background-color: #001f00;
-        border: 0;
-        color: #00bf00;
-        margin: 0 5px;
-        padding: 5px;
+        display: flex;
+        grid-row: 1;
+        margin: 0;
+        overflow-x: scroll;
+        padding: 0;
 
-        &:hover
+        li
         {
-          background-color: #3f3f3f;
+          align-items: center;
+          background-color: #001f00;
+          border-left: 1px solid #007f00;
+          border-right: 1px solid #007f00;
+          border-bottom: 3px solid #00000000;
+          color: #00bf00;
+          display: flex;
+          padding: 0 10px;
+
+          button
+          {
+            background-color: #001f00;
+            border: 0;
+            color: #00bf00;
+            margin: 0 5px;
+            padding: 5px;
+
+            &:hover
+            {
+              background-color: #3f3f3f;
+            }
+          }
+
+          &.active
+          {
+            border-bottom: 3px solid #007f00;
+            color: #00ff00;
+
+            button
+            {
+              color: #00ff00;
+            }
+          }
         }
       }
 
-      &.active
+      #ace_editor
       {
-        border-bottom: 3px solid #007f00;
-        color: #00ff00;
+        grid-row: 2;
+      }
+    }
 
-        button
+    #hsizer
+    {
+      background-color: #005f00;
+      border-bottom: 2px solid #003f00;
+      border-top: 2px solid #007f00;
+      cursor: row-resize;
+    }
+
+    #console
+    {
+      background-color: #000000;
+      color: #00ff00;
+      display: grid;
+      font: 12px monospace;
+      grid-row: 3;
+      grid-template-rows: 2em 1fr;
+      overflow: hidden;
+
+      #heading
+      {
+        align-items: center;
+        background-color: #001f00;
+        display: flex;
+        grid-row: 1;
+        padding: 0 10px;
+      }
+
+      #output
+      {
+        grid-row: 2;
+        margin: 10px;
+        overflow-y: scroll;
+
+        p
         {
-          color: #00ff00;
+          margin: 0px;
         }
       }
     }
-  }
-
-  #ace_editor
-  {
-    grid-row: 2;
   }
 }
 
@@ -147,7 +208,6 @@ body
   background-color: #001f00;
   color: #00ff00;
   display: grid;
-  grid-column: 1 / span 2;
   grid-row: 3;
   grid-template-columns: repeat(7, 1fr);
 

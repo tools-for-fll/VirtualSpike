@@ -17,11 +17,17 @@ import * as umath from "./micropython/umath.js";
 let deviceType = [];
 let deviceView = [];
 
+let hsizerDown = false;
+let hRatio = 0.75;
+let vsizerDown = false;
+let vRatio = 0.5;
+let vRatioSave = undefined;
+
 let interp = null;
 
 const scope =
 {
-  print: (...args) => { console.log(...args); },
+  print: consolePrint,
   range: range,
   simDone: btnStop
 };
@@ -46,6 +52,12 @@ init()
   $("#btn_config").on("click", btnConfig);
   $("#btn_fullscreen").on("click", btnFullscreen);
   $("#btn_about").on("click", btnAbout);
+
+  $(".frame #vsizer").on("mousedown", onMouseDownVsizer);
+  $(".frame #hsizer").on("mousedown", onMouseDownHsizer);
+  $(document).on("mousemove", onMouseMove);
+  $(document).on("mouseup", onMouseUp);
+  $(document).on("click", onMouseUp);
 
   $(".porta").on("click", () => btnPortView(parameters.Port.A));
   $(".portb").on("click", () => btnPortView(parameters.Port.B));
@@ -81,6 +93,9 @@ init()
                                 });
 
   $(document).on("keyup", onKeyUp);
+  $(window).on("resize", onResize);
+
+  onResize();
 }
 
 /**
@@ -232,6 +247,23 @@ step()
 }
 
 function
+consolePrint(...args)
+{
+  const output = $("#console #output");
+
+  let string = "";
+  for(let i = 0; i < args.length; i++)
+  {
+    string += " " + args[i];
+  }
+  string += "<br>";
+
+  output.append(string);
+
+  output.scrollTop(output.get(0).scrollHeight);
+}
+
+function
 range(start, end = NaN, step = 1)
 {
   let arr = [];
@@ -360,13 +392,24 @@ btnRandom()
 function
 btnShowCode()
 {
-  if($(".frame").hasClass("show-editor"))
+  if(vRatioSave === undefined)
   {
-    $(".frame").removeClass("show-editor");
+    if(vRatio === 1)
+    {
+      vRatio = 0.5;
+    }
+    else
+    {
+      vRatioSave = vRatio;
+      vRatio = 1;
+    }
+    onResize();
   }
   else
   {
-    $(".frame").addClass("show-editor");
+    vRatio = vRatioSave;
+    vRatioSave = undefined;
+    onResize();
     Editor.focus();
   }
 }
@@ -485,4 +528,87 @@ onKeyUp(e)
     // Do not allow this key event to further propagated.
     e.stopPropagation();
   }
+}
+
+function
+onMouseDownVsizer(e)
+{
+  vsizerDown = true;
+}
+
+function
+onMouseDownHsizer(e)
+{
+  hsizerDown = true;
+}
+
+function
+onMouseMove(e)
+{
+  if(vsizerDown)
+  {
+    let div = $(".frame #content");
+
+    let width = e.clientX - div[0].offsetLeft - 6;
+    if(width < 0)
+    {
+      width = 0;
+    }
+    if(width > (div[0].offsetWidth - 12))
+    {
+      width = div[0].offsetWidth - 12;
+    }
+
+    vRatio = width / (div[0].offsetWidth - 12);
+
+    div.css("grid-template-columns", `${width}px 12px 1fr`);
+
+    e.stopPropagation();
+
+    vRatioSave = undefined;
+  }
+
+  if(hsizerDown)
+  {
+    let div = $(".frame #dev");
+
+    let height = e.clientY - div[0].offsetTop - 6;
+    if(height < 0)
+    {
+      height = 0;
+    }
+    if(height > (div[0].offsetHeight - 12))
+    {
+      height = div[0].offsetHeight - 12;
+    }
+
+    hRatio = height / (div[0].offsetHeight - 12);
+
+    div.css("grid-template-rows", `${height}px 12px 1fr`);
+
+    e.stopPropagation();
+  }
+}
+
+function
+onMouseUp(e)
+{
+  vsizerDown = false;
+  hsizerDown = false;
+}
+
+function
+onResize()
+{
+  let div = $(".frame #content");
+
+  let width = parseInt((div[0].offsetWidth - 12) * vRatio);
+
+  div.css("grid-template-columns", `${width}px 12px 1fr`);
+
+  div = $(".frame #dev");
+
+  let height = parseInt((div[0].offsetHeight - 12) * hRatio);
+
+  div.css("grid-template-rows", `${height}px 12px 1fr`);
 }
