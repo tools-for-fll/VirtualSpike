@@ -10,7 +10,7 @@ let buffers = [];
 let robotResetHandler = null;
 
 /*
-let defaultText = `# start_position: 15.5 8.5 45
+let defaultText = `# start_position: 15.50 8.50 45
 # left_wheel: A
 # right_wheel: E
 # wheel_diameter: 56
@@ -24,7 +24,7 @@ from pybricks.tools import wait, StopWatch
 
 hub = PrimeHub()`;
 */
-let defaultText = `# start_position: 72.9 4.24 90
+let defaultText = `# start_position: 72.90 4.24 90
 # left_wheel: A
 # right_wheel: E
 # wheel_diameter: 56
@@ -450,7 +450,7 @@ def m_sweeper() -> None:
 
     # Uncomment these lines to time the run.
     sw.pause()
-    print(sw.time() / 1000)
+    print("Time: ", sw.time() / 1000)
 
 m_sweeper()`;
 
@@ -548,6 +548,173 @@ bufferExists(name)
   }
 
   return(false);
+}
+
+export function
+robotStartPosition(...args)
+{
+  let ret, idx, tokens;
+
+  // The default starting position.
+  ret = [ 15.5, 8.5, 45 ];
+
+  if(args.length === 0)
+  {
+    // Get the contents of the current editor buffer.
+    let source = bufferContents();
+
+    // See if the starting position comment exists in the source.
+    idx = source.indexOf("# start_position: ");
+    if(idx !== -1)
+    {
+      // Parse the starting position comment.
+      tokens = source.substring(idx + 18).
+                 match(/(-?\d+(\.\d+)?) (-?\d+(\.\d+)?) (-?\d+(\.\d+)?)/);
+      if(tokens !== null)
+      {
+        // The comment was parsed successfully, get the position of the robot
+        // from the values in the comment.
+        ret = [ parseFloat(tokens[1]), parseFloat(tokens[3]),
+                parseFloat(tokens[5]) ];
+      }
+    }
+
+    // Return the robot position.
+    return(ret);
+  }
+  else
+  {
+    // Update the starting position from the supplied values.
+    ret[0] = args[0];
+    if(args.length > 1)
+    {
+      ret[1] = args[1];
+    }
+    if(args.length > 2)
+    {
+      ret[2] = args[2];
+    }
+
+    let str = `# start_position: ${ret[0].toFixed(2)} ${ret[1].toFixed(2)} ` +
+              `${ret[2].toFixed(0)}`;
+
+    editor.find(/^# start_position.*$/);
+    editor.replace(str);
+  }
+}
+
+export function
+robotLeftMotor()
+{
+  let ret, idx, tokens;
+
+  // By default, there is no left motor to return.
+  ret = -1;
+
+  // Get the contents of the current editor buffer.
+  let source = bufferContents();
+
+  // See if the left motor comment exists in the source.
+  idx = source.indexOf("# left_wheel: ");
+  if(idx !== -1)
+  {
+    // Parse the left motor comment.
+    tokens = source.substring(idx + 14).match(/([A-Fa-f])/);
+    if(tokens !== null)
+    {
+      // The comment was parsed successfully, so get the index of the left
+      // motor.
+      ret = tokens[1].toLowerCase().charCodeAt(0) - "a".charCodeAt(0);
+    }
+  }
+
+  // Return the left motor.
+  return(ret);
+}
+
+export function
+robotRightMotor()
+{
+  let ret, idx, tokens;
+
+  // By default, there is no right motor to return.
+  ret = -1;
+
+  // Get the contents of the current editor buffer.
+  let source = bufferContents();
+
+  // See if the right motor comment exists in the source.
+  idx = source.indexOf("# right_wheel: ");
+  if(idx !== -1)
+  {
+    // Parse the right motor comment.
+    tokens = source.substring(idx + 15).match(/([A-Fa-f])/);
+    if(tokens !== null)
+    {
+      // The comment was parsed successfully, so get the index of the right
+      // motor.
+      ret = tokens[1].toLowerCase().charCodeAt(0) - "a".charCodeAt(0);
+    }
+  }
+
+  // Return the right motor.
+  return(ret);
+}
+
+export function
+robotWheelDiameter()
+{
+  let ret, idx, tokens;
+
+  // The default wheel diameter.
+  ret = 56;
+
+  // Get the contents of the current editor buffer.
+  let source = bufferContents();
+
+  // See if the wheel diameter comment exists in the source.
+  idx = source.indexOf("# wheel_diameter: ");
+  if(idx !== -1)
+  {
+    // Parse the wheel diameter comment.
+    tokens = source.substring(idx + 18).match(/(\d+(\.\d+)?)/);
+    if(tokens !== null)
+    {
+      // The comment was parsed successfully, so get the wheel diameter.
+      ret = parseFloat(tokens[1]);
+    }
+  }
+
+  // Return the wheel diameter.
+  return(ret);
+}
+
+export function
+robotWheelTrack()
+{
+  let ret, idx, tokens;
+
+  // The default wheel track.
+  ret = 112;
+
+  // Get the contents of the current editor buffer.
+  let source = bufferContents();
+
+  // See if the wheel tracxk comment exists in the source.
+  idx = source.indexOf("# wheel_track: ");
+  if(idx !== -1)
+  {
+    // Parse the wheel track comment.
+    tokens = source.substring(idx + 15).match(/(\d+(\.\d+)?)/);
+    if(tokens !== null)
+    {
+      // The comment was parse successfully, so get the wheel track.
+      ret = parseFloat(tokens[1]);
+    }
+  }
+
+  // Return the wheel track.
+  return(ret);
 }
 
 function

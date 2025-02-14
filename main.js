@@ -360,7 +360,7 @@ btnPlayPause()
 
     let source = Editor.bufferContents() + "\nsimDone()";
 
-    sim.reset(source, false);
+    sim.reset(false);
 
     source = source.replace(/\ndef /g, "\nasync def ");
 
@@ -378,7 +378,7 @@ btnStop()
 function
 btnReset()
 {
-  sim.reset(Editor.bufferContents(), true);
+  sim.reset(true);
 
   btnStop();
 }
@@ -503,30 +503,101 @@ btnPortView(port)
 function
 onKeyUp(e)
 {
-  // The key presses to look for and the handler to call when they are seen.
-  const handlers =
-  {
-    "2": Display.setView2D,
-    "3": Display.setView3D,
-    "C": btnShowCode,
-    "c": btnShowCode,
-    "F": btnFullscreen,
-    "f": btnFullscreen,
-    "P": btnPlayPause,
-    "p": btnPlayPause,
-    "R": btnReset,
-    "r": btnReset
-  };
+  let update = false;
 
-  // See if Ctrl, Option/Alt, and one of the defined keys are pressed.
-  if((e.altKey == false) && (e.ctrlKey == true) && (e.shiftKey == true) &&
-     (handlers[e.key] !== undefined))
+  if(e.target !== $("body")[0])
   {
-    // Call the handler for this key.
-    handlers[e.key]();
+    return;
+  }
 
-    // Do not allow this key event to further propagated.
-    e.stopPropagation();
+  // XYZZY Ignore if running...
+
+  let [ x, y, r ] = Editor.robotStartPosition();
+  let delta;
+
+  if(e.shiftKey === true)
+  {
+    delta = 0.01;
+  }
+  else if(e.altKey === true)
+  {
+    delta = 0.1;
+  }
+  else
+  {
+    delta = 1.0;
+  }
+
+  if(e.key === "ArrowLeft")
+  {
+    if((e.shiftKey === true) && (e.altKey === true))
+    {
+      if(x > 46.5)
+      {
+        x = 93 - x;
+        update = true;
+      }
+    }
+    else
+    {
+      x -= delta;
+      update = true;
+    }
+  }
+
+  if(e.key === "ArrowRight")
+  {
+    if((e.shiftKey === true) && (e.altKey === true))
+    {
+      if(x < 46.5)
+      {
+        x = 93 - x;
+        update = true;
+      }
+    }
+    else
+    {
+      x += delta;
+      update = true;
+    }
+  }
+
+  if(e.key === "ArrowUp")
+  {
+    y += delta;
+    update = true;
+  }
+
+  if(e.key === "ArrowDown")
+  {
+    y -= delta;
+    update = true;
+  }
+
+  if((e.key === "n") || (e.key === "N"))
+  {
+    r += (delta === 1) ? 10 : 1;
+    update = true;
+  }
+
+  if((e.key === "m") || (e.key === "M"))
+  {
+    r -= (delta === 1) ? 10 : 1;
+    update = true;
+  }
+
+  if(update)
+  {
+    if(r > 180)
+    {
+      r -= 360;
+    }
+    if(r <= -180)
+    {
+      r += 360;
+    }
+    Editor.robotStartPosition(x, y, r);
+    sim.reset(true);
   }
 }
 

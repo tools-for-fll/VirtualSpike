@@ -4,6 +4,7 @@
 // BSD license file in the root directory of this project.
 
 import * as Display from "./Display.js";
+import * as Editor from "./Editor.js";
 import * as hubs from "./pybricks/hubs.js";
 import * as parameters from "./pybricks/parameters.js";
 import * as pupdevices from "./pybricks/pupdevices.js";
@@ -63,17 +64,13 @@ let imuOffset = 0;
 /**
  * Resets the robot simulation.
  *
- * @param source A string containing the source of the current editor buffer;
- *               used to set properties of the robot (position, rotation, and
- *               so on).
- *
  * @param soft A boolean that is <b>true</b> if a soft reset should be
  *             performed (maintaining the current set of devices, just
  *             resetting their internal state) or <b>false</b> if a hard reset
  *             should be performed (removing all devices).
  */
 export function
-reset(source, soft)
+reset(soft)
 {
   let tokens, idx;
 
@@ -115,86 +112,20 @@ reset(source, soft)
     }
   }
 
-  // Reset the starting position of the robot to the "center" of the red launch
-  // area.
-  robotX = 15.5;
-  robotY = 8.5;
-  robotR = 45;
+  // Set the starting position from the source.
+  [ robotX, robotY, robotR ] = Editor.robotStartPosition();
 
-  // See if the starting position comment exists in the source.
-  idx = source.indexOf("# start_position: ");
-  if(idx !== -1)
-  {
-    // Parse the starting position comment.
-    tokens = source.substring(idx + 18).
-               match(/(-?\d+(\.\d+)?) (-?\d+(\.\d+)?) (-?\d+(\.\d+)?)/);
-    if(tokens !== null)
-    {
-      // The comment was parsed successfully, so set the position of the robot
-      // to the values from the comment.
-      robotX = parseFloat(tokens[1]);
-      robotY = parseFloat(tokens[3]);
-      robotR = parseFloat(tokens[5]);
-    }
-  }
+  // Set the left motor from the source.
+  robotLeft = Editor.robotLeftMotor();
 
-  // See if the left motor comment exists in the source.
-  robotLeft = -1;
-  idx = source.indexOf("# left_wheel: ");
-  if(idx !== -1)
-  {
-    // Parse the left motor comment.
-    tokens = source.substring(idx + 14).match(/([A-Fa-f])/);
-    if(tokens !== null)
-    {
-      // The comment was parsed successfully, so get the index of the left
-      // motor.
-      robotLeft = tokens[1].toLowerCase().charCodeAt(0) - "a".charCodeAt(0);
-    }
-  }
+  // Set the right motor from the source.
+  robotRight = Editor.robotRightMotor();
 
-  // See if the right motor comment exists in the source.
-  robotRight = -1;
-  idx = source.indexOf("# right_wheel: ");
-  if(idx !== -1)
-  {
-    // Parse the right motor comment.
-    tokens = source.substring(idx + 15).match(/([A-Fa-f])/);
-    if(tokens !== null)
-    {
-      // The comment was parsed successfully, so get the index of the right
-      // motor.
-      robotRight = tokens[1].toLowerCase().charCodeAt(0) - "a".charCodeAt(0);
-    }
-  }
+  // Set the wheel diameter from the source.
+  robotWheel = Editor.robotWheelDiameter();
 
-  // See if the wheel diameter comment exists in the source.
-  robotWheel = 56;
-  idx = source.indexOf("# wheel_diameter: ");
-  if(idx !== -1)
-  {
-    // Parse the wheel diameter comment.
-    tokens = source.substring(idx + 18).match(/(\d+(\.\d+)?)/);
-    if(tokens !== null)
-    {
-      // The comment was parsed successfully, so get the wheel diameter.
-      robotWheel = parseFloat(tokens[1]);
-    }
-  }
-
-  // See if the wheel tracxk comment exists in the source.
-  robotTrack = 112;
-  idx = source.indexOf("# wheel_track: ");
-  if(idx !== -1)
-  {
-    // Parse the wheel track comment.
-    tokens = source.substring(idx + 15).match(/(\d+(\.\d+)?)/);
-    if(tokens !== null)
-    {
-      // The comment was parse successfully, so get the wheel track.
-      robotTrack = parseFloat(tokens[1]);
-    }
-  }
+  // Set the wheel track from the source.
+  robotTrack = Editor.robotWheelTrack();
 
   // Update the position of the robot.
   Display.setRobotPosition(robotX, robotY, robotR);
