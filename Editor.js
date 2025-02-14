@@ -5,7 +5,11 @@
 
 let editor;
 
+let storage = window.localStorage;
+
 let buffers = [];
+
+let bufferTimer = null;
 
 let robotResetHandler = null;
 
@@ -462,9 +466,29 @@ init()
   editor.setKeyboardHandler("ace/keyboard/emacs");
   editor.setTheme("ace/theme/gob");
 
-  addBuffer(null);
+  let restored = false;
+  for(let idx = 0; idx < storage.length; idx++)
+  {
+    let key = storage.key(idx);
+
+    if(key.substring(0, 7) === "editor/")
+    {
+      let name = key.substring(7);
+
+      newBuffer(name, null, storage.getItem(key));
+
+      restored = true;
+    }
+  }
+
+  if(!restored)
+  {
+    addBuffer(null);
+  }
 
   $("#editor .nav .add").on("click", addBuffer);
+
+  $(window).on("visibilitychange", saveBuffer);
 }
 
 export function
@@ -480,7 +504,7 @@ focus()
 }
 
 export function
-newBuffer(name, text)
+newBuffer(name, text, json = null)
 {
   name = name.substring(0, name.length - 3);
   let html = '<li class="active">' +
@@ -501,18 +525,28 @@ newBuffer(name, text)
 
   newTab.find(".name").parent().on("click", selectBuffer);
   newTab.find(".name").on("focusout", editName);
+  newTab.find(".name").on("keydown", editName);
   newTab.find(".close").on("click", closeBuffer);
 
-  buffers[name] = ace.createEditSession(text);
+  if(text !== null)
+  {
+    buffers[name] = ace.createEditSession(text, "ace/mode/python");
+  }
+  else
+  {
+    buffers[name] = ace.EditSession.fromJSON(json);
+    buffers[name].setUndoManager(new ace.UndoManager());
+  }
 
-  buffers[name].setMode("ace/mode/python");
   buffers[name].setUseSoftTabs(true);
-  buffers[name].on("change", function(delta)
-                             {
-                               editBuffer(newTab);
-                             });
+  buffers[name].on("change", manipulateBuffer);
+  buffers[name].on("changeScrollLeft", manipulateBuffer);
+  buffers[name].on("changeScrollTop", manipulateBuffer);
+  buffers[name].selection.on("changeSelection", manipulateBuffer);
+  buffers[name].selection.on("changeCursor", manipulateBuffer);
 
   restoreBuffer(name);
+  saveBuffer(name);
 }
 
 export function
@@ -725,6 +759,9 @@ saveBuffer()
   if(name != "")
   {
     buffers[name] = editor.getSession();
+
+    storage.setItem("editor/" + name + ".py",
+                    JSON.stringify(editor.getSession().toJSON()));
   }
 }
 
@@ -790,6 +827,8 @@ closeBuffer(e)
   {
     delete buffers[name];
 
+    storage.removeItem(`editor/${name}.py`);
+
     tab.remove();
 
     if(isActive)
@@ -832,6 +871,18 @@ closeBuffer(e)
 function
 editName(e)
 {
+  if(e.type === "keydown")
+  {
+    if(e.key === "Enter")
+    {
+      editor.focus();
+      e.stopPropagation();
+      return(false);
+    }
+
+    return(true);
+  }
+
   let oldName = $(e.target).data("name");
   let newName = $(e.target).text();
 
@@ -850,17 +901,11 @@ editName(e)
   buffers[newName] = buffers[oldName];
 
   delete buffers[oldName];
-}
 
-function
-editBuffer(tab)
-{
-  let button = tab.find("button i");
+  storage.removeItem(`editor/${oldName}.py`);
 
-  if(button.hasClass("fa-close"))
-  {
-    tab.find("button i").removeClass("fa-close").addClass("fa-circle");
-  }
+  storage.setItem(`editor/${newName}.py`,
+                  JSON.stringify(buffers[newName].toJSON()));
 }
 
 function
@@ -893,4 +938,23 @@ addBuffer(e)
   {
     e.stopPropagation();
   }
+}
+
+function
+bufferTimeout()
+{
+  saveBuffer();
+
+  bufferTimer = null;
+}
+
+function
+manipulateBuffer()
+{
+  if(bufferTimer !== null)
+  {
+    clearTimeout(bufferTimer);
+  }
+
+  bufferTimer = setTimeout(bufferTimeout, 5000);
 }

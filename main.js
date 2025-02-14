@@ -27,6 +27,7 @@ let interp = null;
 
 const scope =
 {
+  __name__: "__main__",
   print: consolePrint,
   range: range,
   simDone: btnStop
@@ -83,7 +84,6 @@ init()
     "pybricks.parameters": parameters,
     "pybricks.pupdevices": pupdevices,
     "pybricks.robotics": robotics,
-    sim,
     "pybricks.tools": tools,
     umath
   };
