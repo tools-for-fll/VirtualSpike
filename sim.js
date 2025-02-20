@@ -9,7 +9,6 @@ import * as hubs from "./pybricks/hubs.js";
 import * as parameters from "./pybricks/parameters.js";
 import * as pupdevices from "./pybricks/pupdevices.js";
 import * as robotics from "./pybricks/robotics.js";
-import * as tools from "./pybricks/tools.js";
 import * as umath from "./micropython/umath.js";
 
 /**

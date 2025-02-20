@@ -4,6 +4,7 @@
 // BSD license file in the root directory of this project.
 
 import "./jquery.js";
+import * as Config from "./Config.js";
 import * as Display from "./Display.js";
 import * as Editor from "./Editor.js";
 import * as sim from "./sim.js";
@@ -66,6 +67,8 @@ init()
   $(".portd").on("click", () => btnPortView(parameters.Port.D));
   $(".porte").on("click", () => btnPortView(parameters.Port.E));
   $(".portf").on("click", () => btnPortView(parameters.Port.F));
+
+  Config.init();
 
   Editor.init();
   Editor.robotReset(btnReset);
@@ -417,7 +420,7 @@ btnShowCode()
 function
 btnConfig()
 {
-  console.log("config");
+  Config.show();
 }
 
 function

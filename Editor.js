@@ -3,11 +3,15 @@
 // Open Source Software: you can modify and/or share it under the terms of the
 // BSD license file in the root directory of this project.
 
+import * as Display from "./Display.js";
+
+let defaultRobot = "Default";
+
 let defaultPosition = [ 15.5, 8.5, 45 ];
 
-let defaultLeftMotor = "A";
+let defaultLeftMotor = "C";
 
-let defaultRightMotor = "E";
+let defaultRightMotor = "D";
 
 let defaultWheelDiameter = 56;
 
@@ -31,15 +35,15 @@ from pybricks.tools import wait, StopWatch
 
 hub = PrimeHub()
 
-left = Motor(Port.A)
-right = Motor(Port.E)
+left = Motor(Port.C)
+right = Motor(Port.D)
 
 drive = DriveBase(left, right, 56, 112)
 
-drive.straight(400)
+drive.straight(325)
 drive.turn(180)
-drive.straight(400)
-drive.turn(180)`;
+drive.straight(325)
+drive.turn(-180)`;
 
 export function
 init()
@@ -129,7 +133,6 @@ newBuffer(name, text, json = null)
   buffers[name].selection.on("changeCursor", manipulateBuffer);
 
   restoreBuffer(name);
-  saveBuffer(name);
 }
 
 export function
@@ -168,15 +171,62 @@ bufferExists(name)
 }
 
 export function
+robotDefaultModel(name)
+{
+  defaultRobot = name;
+}
+
+export function
+robotModel(name)
+{
+  let ret, idx, end;
+
+  if(name === undefined)
+  {
+    // The default robot model.
+    ret = defaultRobot;
+
+    // Get the contents of the current editor buffer.
+    let source = bufferContents();
+
+    // See if the robot model comment exists in the source.
+    idx = source.indexOf("# robot: ");
+    if(idx !== -1)
+    {
+      // Parse the robot model comment.
+      ret = source.substring(idx + 9);
+      end = ret.indexOf("\n");
+      if(end !== -1)
+      {
+        ret = ret.substring(0, end);
+      }
+    }
+
+    // Return the robot model.
+    return(ret);
+  }
+  else
+  {
+    // Construct the robot model comment.
+    let str = `# robot: ${name}`;
+
+    // Find the existing robot modelcomment and replace it with the new one.
+    editor.find(/^# robot.*$/);
+    editor.replace(str);
+  }
+}
+
+export function
 robotStartPosition(...args)
 {
   let ret, idx, tokens;
 
-  // The default starting position.
-  ret = defaultPosition;
-
+  // See if a robot position was supplied.
   if(args.length === 0)
   {
+    // The default starting position.
+    ret = defaultPosition;
+
     // Get the contents of the current editor buffer.
     let source = bufferContents();
 
@@ -212,9 +262,12 @@ robotStartPosition(...args)
       ret[2] = args[2];
     }
 
+    // Construct the starting position comment.
     let str = `# start_position: ${ret[0].toFixed(2)} ${ret[1].toFixed(2)} ` +
               `${ret[2].toFixed(0)}`;
 
+    // Find the existing starting position comment and replace it with the new
+    // one.
     editor.find(/^# start_position.*$/);
     editor.replace(str);
   }
@@ -352,7 +405,11 @@ function
 restoreBuffer(name)
 {
   editor.setSession(buffers[name]);
+
   editor.focus();
+
+  Display.loadRobot(robotModel());
+
   if(robotResetHandler != null)
   {
     robotResetHandler();
@@ -512,6 +569,7 @@ addBuffer(e)
     if(j == (tabs.length - 1))
     {
       let text = "";
+      text += `# robot: ${defaultRobot}\n`;
       text += `# start_position: ${defaultPosition[0].toFixed(2)} ${defaultPosition[1].toFixed(2)} ${defaultPosition[2].toFixed(0)}\n`;
       text += `# left_wheel: ${defaultLeftMotor}\n`;
       text += `# right_wheel: ${defaultRightMotor}\n`;

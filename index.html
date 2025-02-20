@@ -147,6 +147,53 @@ license file in the root directory of this project.
              src="https://github.blog/wp-content/uploads/2008/12/forkme_right_green_007200.png">
       </a>
     </div>
+    <dialog id="config">
+      <div>
+        <span class="heading">
+          Season
+        </span>
+        <hr>
+        <select id="season_select">
+          <option value="2025">2024-2025 Submerged</option>
+          <!--
+          <option value="2024">2023-2024 MasterPiece</option>
+          <option value="2023">2022-2023 SuperPowered</option>
+          -->
+        </select>
+        <br>
+        <br>
+        <span class="heading">
+          Robot
+        </span>
+        <hr>
+        <select id="robot_select">
+          <option value="default">Default</option>
+        </select>
+        <button id="robot_delete">Delete</button>
+        <input id="robot_file" type="file" style="display: none" />
+        <button id="robot_upload">Add...</button>
+        <br>
+        <br>
+        <button id="config_done">Done</button>
+      </div>
+    </dialog>
+    <dialog id="alert">
+      <div>
+        <span id="message"></span>
+        <div id="buttons">
+          <button id="ok">OK</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="confirm">
+      <div>
+        <span id="message"></span>
+        <div id="buttons">
+          <button id="cancel">Cancel</button>
+          <button id="ok">OK</button>
+        </div>
+      </div>
+    </dialog>
     <dialog id="about">
       <div>
         <span class="title">VirtualSpike</span>

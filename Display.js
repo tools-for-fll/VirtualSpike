@@ -3,6 +3,8 @@
 // Open Source Software: you can modify and/or share it under the terms of the
 // BSD license file in the root directory of this project.
 
+import * as Editor from "./Editor.js";
+
 import * as THREE from "three";
 
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -16,15 +18,25 @@ import { AnaglyphEffect } from "three/addons/effects/AnaglyphEffect.js";
 
 import { fileMap} from "./LDrawMap.js";
 
-let container;
+let container = null;
 
-let camera, scene, renderer, effect, controls;
+let camera = null;
 
-let lDrawLoader;
+let scene = null;
+
+let renderer = null;
+
+let effect = null;
+
+let controls = null;
+
+let lDrawLoader = null;
 
 let loadQueue = [];
 
-let count = 0, loaded = 0;
+let count = 0;
+
+let loaded = 0;
 
 let cameraMode = 0;
 
@@ -38,9 +50,17 @@ let eyeY = inchToLDU(5);
 
 let eyeD = inchToLDU(18);
 
-let robot = null, robotX, robotY, robotR;
+let robotName = null;
 
-let stepFn;
+let robot = null;
+
+let robotX = 0;
+
+let robotY = 0;
+
+let robotR = 0;
+
+let stepFn = null;
 
 function
 toRadians(angle)
@@ -61,9 +81,23 @@ lduToInch(ldu)
 }
 
 function
-loadLEGOModel(model, x, y, z, r, c = false)
+loadLEGOModel(modelFile, modelData, x, y, z, r, c = false)
 {
   let item;
+
+  function
+  loadNext()
+  {
+    item = loadQueue.shift();
+    if(item.modelFile !== null)
+    {
+      lDrawLoader.load(item.modelFile, loadDone);
+    }
+    else
+    {
+      lDrawLoader.parse(item.modelData, loadDone);
+    }
+  }
 
   function
   loadDone(group)
@@ -116,15 +150,15 @@ loadLEGOModel(model, x, y, z, r, c = false)
     }
     else
     {
-      item = loadQueue.pop();
-      lDrawLoader.load(item.model, loadDone);
+      loadNext();
     }
   }
 
   count++;
 
   loadQueue.push({
-                   model: model,
+                   modelFile: modelFile,
+                   modelData: modelData,
                    x: x,
                    y: y,
                    z: z,
@@ -134,8 +168,7 @@ loadLEGOModel(model, x, y, z, r, c = false)
 
   if(count == 1)
   {
-    item = loadQueue.pop();
-    lDrawLoader.load(item.model, loadDone);
+    loadNext();
   }
 }
 
@@ -155,12 +188,12 @@ onContainerResize(entries)
 function
 animate()
 {
-  if(robot != null)
+  if((robot !== null) && (stepFn !== null))
   {
     stepFn();
   }
 
-  if((robot == null) || (cameraMode == 0))
+  if((robot === null) || (cameraMode === 0))
   {
     controls.update();
   }
@@ -312,36 +345,36 @@ init()
     // Mission 1 & 4
 if(true)
 {
-  loadLEGOModel('models/2025/CoralNursery.ldr', inchToLDU(-36.1),
+  loadLEGOModel('models/2025/CoralNursery.ldr', null, inchToLDU(-36.1),
                   inchToLDU(0.125), inchToLDU(-7.45), 0);
 }
 
   // Mission 2
 if(true)
 {
-  loadLEGOModel('models/2025/Shark.ldr', inchToLDU(-35.6), 0, inchToLDU(-18.1),
-                toRadians(90));
+  loadLEGOModel('models/2025/Shark.ldr', null, inchToLDU(-35.6), 0,
+                inchToLDU(-18.1), toRadians(90));
 }
 
   // Mission 3
 if(true)
 {
-  loadLEGOModel('models/2025/CoralReef.ldr', inchToLDU(-18.86), 0,
+  loadLEGOModel('models/2025/CoralReef.ldr', null, inchToLDU(-18.86), 0,
                 inchToLDU(-18.98), 0);
-  loadLEGOModel('models/2025/Coral1.ldr', inchToLDU(27.28), 0, inchToLDU(-5.04),
-                toRadians(Math.random() * 360));
+  loadLEGOModel('models/2025/Coral1.ldr', null, inchToLDU(27.28), 0,
+                inchToLDU(-5.04), toRadians(Math.random() * 360));
   if(Math.random() < 0.5)
   {
-    loadLEGOModel('models/2025/Coral2.ldr', inchToLDU(-22.6), 0, inchToLDU(0.9),
-                  toRadians(Math.random() * 360));
-    loadLEGOModel('models/2025/Coral3.ldr', inchToLDU(-26.5), 0,
+    loadLEGOModel('models/2025/Coral2.ldr', null, inchToLDU(-22.6), 0,
+                  inchToLDU(0.9), toRadians(Math.random() * 360));
+    loadLEGOModel('models/2025/Coral3.ldr', null, inchToLDU(-26.5), 0,
                   inchToLDU(-5.04), toRadians(Math.random() * 360));
   }
   else
   {
-    loadLEGOModel('models/2025/Coral3.ldr', inchToLDU(-22.6), 0, inchToLDU(0.9),
-                  toRadians(Math.random() * 360));
-    loadLEGOModel('models/2025/Coral2.ldr', inchToLDU(-26.5), 0,
+    loadLEGOModel('models/2025/Coral3.ldr', null, inchToLDU(-22.6), 0,
+                  inchToLDU(0.9), toRadians(Math.random() * 360));
+    loadLEGOModel('models/2025/Coral2.ldr', null, inchToLDU(-26.5), 0,
                   inchToLDU(-5.04), toRadians(Math.random() * 360));
   }
 }
@@ -349,114 +382,117 @@ if(true)
   // Mission 5
 if(true)
 {
-  loadLEGOModel('models/2025/WreckFront.ldr', inchToLDU(-5), 0, inchToLDU(-1.5),
-                toRadians(310));
+  loadLEGOModel('models/2025/WreckFront.ldr', null, inchToLDU(-5), 0,
+                inchToLDU(-1.5), toRadians(310));
 }
 
   // Mission 6 & 7
 if(true)
 {
-  loadLEGOModel('models/2025/WreckBack.ldr', inchToLDU(-10), inchToLDU(-0.95),
-                inchToLDU(-2.4), 0);
+  loadLEGOModel('models/2025/WreckBack.ldr', null, inchToLDU(-10),
+                inchToLDU(-0.95), inchToLDU(-2.4), 0);
 }
 
   // Mission 8
 if(true)
 {
-  loadLEGOModel('models/2025/ArtificialHabitat.ldr', inchToLDU(5.12), 0,
+  loadLEGOModel('models/2025/ArtificialHabitat.ldr', null, inchToLDU(5.12), 0,
                 inchToLDU(14.45), toRadians(180));
 }
 
   // Mission 9
 if(true)
 {
-  loadLEGOModel('models/2025/UnknownCreature.ldr', inchToLDU(14.33), 0,
+  loadLEGOModel('models/2025/UnknownCreature.ldr', null, inchToLDU(14.33), 0,
                 inchToLDU(-2.283), toRadians(225));
 }
 
   // Mission 10
 if(true)
 {
-  loadLEGOModel('models/2025/Submarine.ldr', inchToLDU(-1.855),
+  loadLEGOModel('models/2025/Submarine.ldr', null, inchToLDU(-1.855),
                 inchToLDU(0.125), inchToLDU(-24.05), toRadians(45));
 }
 
   // Mission 11
 if(true)
 {
-  loadLEGOModel('models/2025/Sonar.ldr', inchToLDU(17.72), 0, inchToLDU(-18),
-                toRadians(270));
+  loadLEGOModel('models/2025/Sonar.ldr', null, inchToLDU(17.72), 0,
+                inchToLDU(-18), toRadians(270));
 }
 
   // Mission 12
 if(true)
 {
-  loadLEGOModel('models/2025/Whale.ldr', inchToLDU(36.6), inchToLDU(0.125),
-                inchToLDU(-19), toRadians(225));
-  loadLEGOModel('models/2025/Krill.ldr', inchToLDU(30.51), 0, inchToLDU(-12.91),
+  loadLEGOModel('models/2025/Whale.ldr', null, inchToLDU(36.6),
+                inchToLDU(0.125), inchToLDU(-19), toRadians(225));
+  loadLEGOModel('models/2025/Krill.ldr', null, inchToLDU(30.51), 0,
+                inchToLDU(-12.91),
                 (Math.random() < 0.5) ? toRadians(45) : toRadians(225));
-  loadLEGOModel('models/2025/Krill.ldr', inchToLDU(23.9), 0, inchToLDU(-9.96),
+  loadLEGOModel('models/2025/Krill.ldr', null, inchToLDU(23.9), 0,
+                inchToLDU(-9.96),
                 (Math.random() < 0.5) ? toRadians(135) : toRadians(315));
-  loadLEGOModel('models/2025/Krill.ldr', inchToLDU(23.54), 0, inchToLDU(0.9),
+  loadLEGOModel('models/2025/Krill.ldr', null, inchToLDU(23.54), 0,
+                inchToLDU(0.9),
                 (Math.random() < 0.5) ? toRadians(45) : toRadians(225));
-  loadLEGOModel('models/2025/Krill.ldr', inchToLDU(-8.07), 0, inchToLDU(0.83),
+  loadLEGOModel('models/2025/Krill.ldr', null, inchToLDU(-8.07), 0,
+                inchToLDU(0.83),
                 (Math.random() < 0.5) ? toRadians(45) : toRadians(225));
-  loadLEGOModel('models/2025/Krill.ldr', inchToLDU(-23.23), 0, inchToLDU(-9.84),
+  loadLEGOModel('models/2025/Krill.ldr', null, inchToLDU(-23.23), 0,
+                inchToLDU(-9.84),
                 (Math.random() < 0.5) ? toRadians(90) : toRadians(270));
 }
 
   // Mission 13
 if(true)
 {
-  loadLEGOModel('models/2025/ChangeShippingLanes.ldr', inchToLDU(33.19), 0,
-                inchToLDU(-5.04), toRadians(225));
+  loadLEGOModel('models/2025/ChangeShippingLanes.ldr', null, inchToLDU(33.19),
+                0, inchToLDU(-5.04), toRadians(225));
 }
 
   // Mission 14
 if(true)
 {
-  loadLEGOModel('models/2025/WaterSample.ldr', inchToLDU(-19.6),
+  loadLEGOModel('models/2025/WaterSample.ldr', null, inchToLDU(-19.6),
                 inchToLDU(0.125), inchToLDU(-6.93), 0);
-  loadLEGOModel('models/2025/SeaBedSample.ldr', inchToLDU(-4.17), 0,
+  loadLEGOModel('models/2025/SeaBedSample.ldr', null, inchToLDU(-4.17), 0,
                 inchToLDU(-20.2), 0);
-  loadLEGOModel('models/2025/PlanktonSample.ldr', inchToLDU(37.48), 0,
+  loadLEGOModel('models/2025/PlanktonSample.ldr', null, inchToLDU(37.48), 0,
                 inchToLDU(-10.55), toRadians(90));
 }
 
   // Mission 15
 if(true)
 {
-  loadLEGOModel('models/2025/WestDock.ldr', inchToLDU(-17.2), 0,
+  loadLEGOModel('models/2025/WestDock.ldr', null, inchToLDU(-17.2), 0,
                 inchToLDU(19.72), 0);
-  loadLEGOModel('models/2025/Ship.ldr', inchToLDU(-14.32), inchToLDU(-0.03125),
-                inchToLDU(19.57), 0);
-  loadLEGOModel('models/2025/EastDock.ldr', inchToLDU(17.87), 0,
+  loadLEGOModel('models/2025/Ship.ldr', null, inchToLDU(-14.32),
+                inchToLDU(-0.03125), inchToLDU(19.57), 0);
+  loadLEGOModel('models/2025/EastDock.ldr', null, inchToLDU(17.87), 0,
                 inchToLDU(19.76), toRadians(180));
 }
 
   // Precision tokens
 if(true)
 {
-  loadLEGOModel('models/2025/Precision.ldr', inchToLDU(-3.75), inchToLDU(2.5),
-                inchToLDU(23.25), Math.random() * 360);
-  loadLEGOModel('models/2025/Precision.ldr', inchToLDU(-2.25), inchToLDU(2.5),
-                inchToLDU(23.25), Math.random() * 360);
-  loadLEGOModel('models/2025/Precision.ldr', inchToLDU(-0.75), inchToLDU(2.5),
-                inchToLDU(23.25), Math.random() * 360);
-  loadLEGOModel('models/2025/Precision.ldr', inchToLDU(0.75), inchToLDU(2.5),
-                inchToLDU(23.25), Math.random() * 360);
-  loadLEGOModel('models/2025/Precision.ldr', inchToLDU(2.25), inchToLDU(2.5),
-                inchToLDU(23.25), Math.random() * 360);
-  loadLEGOModel('models/2025/Precision.ldr', inchToLDU(3.75), inchToLDU(2.5),
-                inchToLDU(23.25), Math.random() * 360);
+  loadLEGOModel('models/2025/Precision.ldr', null, inchToLDU(-3.75),
+                inchToLDU(2.5), inchToLDU(23.25), Math.random() * 360);
+  loadLEGOModel('models/2025/Precision.ldr', null, inchToLDU(-2.25),
+                inchToLDU(2.5), inchToLDU(23.25), Math.random() * 360);
+  loadLEGOModel('models/2025/Precision.ldr', null, inchToLDU(-0.75),
+                inchToLDU(2.5), inchToLDU(23.25), Math.random() * 360);
+  loadLEGOModel('models/2025/Precision.ldr', null, inchToLDU(0.75),
+                inchToLDU(2.5), inchToLDU(23.25), Math.random() * 360);
+  loadLEGOModel('models/2025/Precision.ldr', null, inchToLDU(2.25),
+                inchToLDU(2.5), inchToLDU(23.25), Math.random() * 360);
+  loadLEGOModel('models/2025/Precision.ldr', null, inchToLDU(3.75),
+                inchToLDU(2.5), inchToLDU(23.25), Math.random() * 360);
 }
 
   // Robot
 if(true)
 {
-  loadLEGOModel('models/SpikeRobot.ldr', robotX, 0, robotY, robotR, true);
-  //loadLEGOModel('models/SpikeRobot-sweeper.ldr', robotX, 0, robotY, robotR, true);
-  //loadLEGOModel('models/2025/Precision.ldr', robotX, 0, robotY, robotR, true);
+  loadRobot(Editor.robotModel());
 }
 
 if(count == 0)
@@ -467,6 +503,53 @@ else
 {
   updateProgressBar();
 }
+}
+
+export function
+loadRobot(name)
+{
+  if(robotName === name)
+  {
+    return;
+  }
+
+  if(scene === null)
+  {
+    return;
+  }
+
+  if(robot !== null)
+  {
+    scene.remove(robot);
+    robot = null;
+  }
+
+  if(count === loaded)
+  {
+    count = 0;
+    loaded = 0;
+  }
+
+  let text = window.localStorage.getItem(`robot/${name}`);
+  if(text === null)
+  {
+    robotName = "Default";
+    loadLEGOModel("models/Default.ldr", null, robotX, 0, robotY, robotR, true);
+  }
+  else
+  {
+    robotName = name;
+    loadLEGOModel(null, text, robotX, 0, robotY, robotR, true);
+  }
+}
+
+export function
+deleteRobot(name)
+{
+  if(robotName === name)
+  {
+    loadRobot("Default");
+  }
 }
 
 export function

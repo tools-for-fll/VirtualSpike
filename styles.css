@@ -312,6 +312,48 @@ dialog
     background-color: #000000;
     border-color: #00ff00;
     color: #00ff00;
+
+    &:disabled
+    {
+      border-color: #007f00;
+      color: #007f00;
+    }
+  }
+
+  hr
+  {
+    border: 1px solid #00ff00;
+  }
+
+  select
+  {
+    background-color: #000000;
+    border-color: #00ff00;
+    color: #00ff00;
+  }
+}
+
+#alert div,
+#confirm div
+{
+  #message
+  {
+    display: block;
+    text-align: center;
+  }
+
+  #buttons
+  {
+    margin-top: 1em;
+    text-align: center;
+  }
+}
+
+#config
+{
+  .heading
+  {
+    font-size: 1.5em;
   }
 }
 
