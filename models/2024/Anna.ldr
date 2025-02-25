@@ -1,0 +1,32 @@
+0 FILE Anna
+0 Untitled Model
+0 Name:  Anna
+0 Author: 
+0 CustomBrick
+0 FlexibleBrickControlPointUnitLength -1
+0 NumOfBricks:  12
+1 15 0 -16 -20 -1 0 0 0 1 0 0 0 -1 33909.dat
+1 15 0 -8 0 0 0 -1 0 1 0 1 0 0 3709b.dat
+1 72 0 -38 20 0 -1 0 1 0 0 0 0 1 87083.dat
+1 15 0 -32 20 1 0 0 0 1 0 0 0 1 3941.dat
+1 25 0 -108 20 1 0 0 0 0 -1 0 1 0 79851.dat
+1 71 0 -68 20 0 -1 0 0 0 -1 1 0 0 3713.dat
+1 4 0 -40 20 1 0 0 0 1 0 0 0 1 4032a.dat
+1 70 0 -56 -29 1 0 0 0 1 0 0 0 1 3815c01.dat
+1 191 20 -56 -39 1 0 0 0 1 0 0 0 1 bl_973pb4113c01.dat copy
+1 14 0 -112 -29 1 0 0 0 1 0 0 0 1 3626cp76.dat
+1 70 0 -112 -29 1 0 0 0 1 0 0 0 1 11256.dat
+1 0 21.5695 -72.8521 -59.3101 0.995332 0.09575 -0.012089 -0.09575 0.964023 -0.247977 -0.012089 0.247977 0.968691 30152ap01.dat
+0 NOFILE
+0 FILE bl_973pb4113c01.dat Copy
+0 Torso Jacket over Bright Light Blue Shirt, Gold Necklace with Heart and Belt Pattern / Bright Light Orange Arms / Yellow Hands
+0 Name:  973pb4113c01
+0 Author:  Studio
+0 FlexibleBrick:  bl_973pb4113c01.dat
+0 FlexibleBrickControlPointUnitLength -1
+1 16 -20 -32 10 1 0 0 0 1 0 0 0 1 973pue.dat
+1 191 -35.5746 -23.0928 10 0.985495 -0.169703 0 0.169703 0.985495 0 0 0 1 3818.dat
+1 191 -4.5282 -23.1243 10 0.985328 0.120683 0.120683 -0.170671 0.696732 0.696732 0 -0.707107 0.707107 3819.dat
+1 14 -43.7265 -5.2169 0.5 0.991565 0.048984 0.119998 0.048984 0.715542 -0.69685 -0.119998 0.69685 0.707107 3820.dat
+1 14 1.4846 -17.7071 -10.5061 0.995103 0.098837 0.000001 -0.098837 0.995104 0 0 0 1 3820.dat
+0 NOFILE

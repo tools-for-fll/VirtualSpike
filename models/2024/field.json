@@ -1,0 +1,302 @@
+{
+    "year": 2024,
+    "mat":
+    {
+        "filename": "mat.jpg",
+        "width": 79.190210863472598,
+        "height": 45.177165354330709,
+        "position": "sc"
+    },
+    "models":
+    [
+         {
+            "comment": "Mission 1",
+            "skip": false,
+            "filename": "Dragon.ldr",
+            "x": -35,
+            "y": 0,
+            "z": -3.15,
+            "r": -90
+        },
+        {
+            "comment": "Mission 2",
+            "skip": false,
+            "filename": "SceneChange.ldr",
+            "x": -31.5,
+            "y": 0,
+            "z": -14.4,
+            "r": 45
+        },
+        {
+            "comment": "Mission 3",
+            "skip": false,
+            "filename": "ImmersiveExperience.ldr",
+            "x": -7.9,
+            "y": 0.025,
+            "z": -17.85,
+            "r": 180
+        },
+        {
+            "comment": "Mission 4",
+            "skip": false,
+            "filename": "Pedestal.ldr",
+            "x": -43,
+            "y": 0,
+            "z": 14,
+            "r": 0
+        },
+        {
+            "comment": "Mission 5",
+            "skip": false,
+            "filename": "Statue.ldr",
+            "x": 14.05,
+            "y": 0.025,
+            "z": -16.9,
+            "r": 0
+        },
+        {
+            "comment": "Mission 6&7",
+            "skip": false,
+            "filename": "Stage.ldr",
+            "x": 34.15,
+            "y": 0.025,
+            "z": -16.75,
+            "r": 45
+        },
+        {
+            "comment": "Mission 8",
+            "skip": false,
+            "filename": "CameraTrack.ldr",
+            "x": 0.95,
+            "y": 0,
+            "z": 20.3,
+            "r": 180
+        },
+        {
+            "comment": "Mission 8",
+            "skip": false,
+            "filename": "CameraShooter.ldr",
+            "x": 13.6,
+            "y": 0,
+            "z": 20.2,
+            "r": 180
+        },
+        {
+            "comment": "Mission 8",
+            "skip": false,
+            "filename": "Camera.ldr",
+            "x": 12.5,
+            "y": 0.9,
+            "z": 20.2,
+            "r": 180,
+            "rz": -10
+        },
+        {
+            "comment": "Mission 9",
+            "skip": false,
+            "filename": "MovieSet.ldr",
+            "x": 6.1,
+            "y": 0.38,
+            "z": 16.2,
+            "r": 0
+        },
+        {
+            "comment": "Mission 10",
+            "skip": false,
+            "filename": "Mixer.ldr",
+            "x": -17.5,
+            "y": 0,
+            "z": -2,
+            "r": 40
+        },
+        {
+            "comment": "Mission 11",
+            "skip": false,
+            "filename": "LightShow.ldr",
+            "x": 0.05,
+            "y": 0,
+            "z": 0.1,
+            "r": 180
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Artist.ldr",
+            "x": 15.3,
+            "y": 0,
+            "z": 1.05,
+            "r": -45
+        },
+        {
+            "comment": "Mission 13",
+            "skip": false,
+            "filename": "CraftCreator.ldr",
+            "x": 17.85,
+            "y": 0,
+            "z": -1.05,
+            "r": 135
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -44.2,
+            "y": 0.1,
+            "z": 17,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -43,
+            "y": 0.1,
+            "z": 17,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -41.8,
+            "y": 0.1,
+            "z": 17,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -44.8,
+            "y": 0.1,
+            "z": 19,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -43.6,
+            "y": 0.1,
+            "z": 19,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -42.4,
+            "y": 0.1,
+            "z": 19,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "Audience.ldr",
+            "x": -41.2,
+            "y": 0.1,
+            "z": 19,
+            "r": 0
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "Sam.ldr",
+            "x": -28,
+            "y": 0,
+            "z": -16.4,
+            "r": -45
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "Anna.ldr",
+            "x": -43,
+            "y": 0,
+            "z": 11,
+            "r": 0
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "Noah.ldr",
+            "x": -14.6,
+            "y": 0,
+            "z": 0.5,
+            "r": -45
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "Izzy.ldr",
+            "x": 18.05,
+            "y": 0,
+            "z": 2.9,
+            "r": 0
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "Emily.ldr",
+            "x": 15.7,
+            "y": 0,
+            "z": 13.5,
+            "r": 45
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": -3.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": -2.25,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": -0.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": 0.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": 2.25,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": 3.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        }
+    ]
+}

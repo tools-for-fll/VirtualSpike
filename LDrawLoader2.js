@@ -1,6 +1,5 @@
 // Lightly modified from the version in three.js:
-// * maintain the preloaded materials when loading a new mode.
-// * manually fix a couple of LEGO inconsistencies between Studio and LDraw.
+// * maintain the preloaded materials when loading a new model.
 // * add a debug mode to output a file map after loading all models.
 
 import {
@@ -922,8 +921,8 @@ class LDrawParsedCache {
 					colorCode = lp.getToken();
 					material = getLocalMaterial( colorCode );
 
-					let posX = parseFloat( lp.getToken() );
-					let posY = parseFloat( lp.getToken() );
+					const posX = parseFloat( lp.getToken() );
+					const posY = parseFloat( lp.getToken() );
 					const posZ = parseFloat( lp.getToken() );
 					const m0 = parseFloat( lp.getToken() );
 					const m1 = parseFloat( lp.getToken() );
@@ -935,42 +934,14 @@ class LDrawParsedCache {
 					const m7 = parseFloat( lp.getToken() );
 					const m8 = parseFloat( lp.getToken() );
 
-					let fileName = lp.getRemainingString().trim().replace( /\\/g, '/' );
-
-					if ( fileName == "37308c01.dat" ) {
-						colorCode = 15;
-						fileName = "37308.dat";
-					}
-
-					if ( fileName == "39367pb01.dat" ) {
-						fileName = "39367p01.dat";
-					}
-
-					if ( fileName == "54696.dat" ) {
-						colorCode = 15;
-					}
-
-					if ( fileName == "55422c01.dat" ) {
-						break;
-					}
-
-					if ( fileName == "bb1142c01.dat" ) {
-						colorCode = 15;
-						fileName = "45601c01.dat";
-					}
-
-					if ( fileName == "bl_41811.dat" ) {
-						posX += 1;
-						posY -= 40;
-						fileName = "41811.dat";
-					}
-
 					const matrix = new Matrix4().set(
 						m0, m1, m2, posX,
 						m3, m4, m5, posY,
 						m6, m7, m8, posZ,
 						0, 0, 0, 1
 					);
+
+					let fileName = lp.getRemainingString().trim().replace( /\\/g, '/' );
 
 					if ( loader.fileMap[ fileName ] ) {
 

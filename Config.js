@@ -51,6 +51,10 @@ loadRobotList()
   if(robot !== null)
   {
     $("#config #robot_select").val(robot);
+    if(robot !== "Default")
+    {
+      $("#config #robot_delete").removeAttr("disabled");
+    }
   }
 }
 
@@ -90,11 +94,20 @@ close()
   $("#config").close();
 }
 
-function
+async function
 selectSeason()
 {
-  storage.setItem("config/season", $("#config #season_select").val());
-  // XYZZY
+  let season = $("#config #season_select").val();
+
+  storage.setItem("config/season", season);
+
+  Display.showProgressBar();
+
+  await Display.loadField(season);
+
+  Display.reloadRobot(Editor.robotModel());
+
+  Display.updateProgressBar();
 }
 
 function

@@ -1,0 +1,292 @@
+{
+    "year": 2025,
+    "mat":
+    {
+        "filename": "mat.jpg",
+        "width": 79.190210863472598,
+        "height": 45.177165354330709,
+        "position": "sc"
+    },
+    "models":
+    [
+        {
+            "comment": "Mission 1",
+            "skip": false,
+            "filename": "CoralNursery.ldr",
+            "x": -36.1,
+            "y": 0.125,
+            "z": -7.45,
+            "r": 0
+        },
+        {
+            "comment": "Mission 2",
+            "skip": false,
+            "filename": "Shark.ldr",
+            "x": -35.6,
+            "y": 0,
+            "z": -18.1,
+            "r": 90
+        },
+        {
+            "comment": "Mission 3",
+            "skip": false,
+            "filename": "CoralReef.ldr",
+            "x": -18.86,
+            "y": 0,
+            "z": -18.98,
+            "r": 0
+        },
+        {
+            "comment": "Mission 3",
+            "skip": false,
+            "filename": "Coral1.ldr",
+            "x": 27.28,
+            "y": 0,
+            "z": -5.04,
+            "r": "random"
+        },
+        {
+            "comment": "Mission 3",
+            "skip": false,
+            "filename": "Coral2.ldr",
+            "x": -22.6,
+            "y": 0,
+            "z": 0.9,
+            "r": "random"
+        },
+        {
+            "comment": "Mission 3",
+            "skip": false,
+            "filename": "Coral3.ldr",
+            "x": -26.5,
+            "y": 0,
+            "z": -5.04,
+            "r": "random"
+        },
+        {
+            "comment": "Mission 5",
+            "skip": false,
+            "filename": "WreckFront.ldr",
+            "x": -5,
+            "y": 0,
+            "z": -1.5,
+            "r": 310
+        },
+        {
+            "comment": "Mission 6&7",
+            "skip": false,
+            "filename": "WreckBack.ldr",
+            "x": -10,
+            "y": -0.95,
+            "z": -2.4,
+            "r": 0
+        },
+        {
+            "comment": "Mission 8",
+            "skip": false,
+            "filename": "ArtificialHabitat.ldr",
+            "x": 5.12,
+            "y": 0,
+            "z": 14.45,
+            "r": 180
+        },
+        {
+            "comment": "Mission 9",
+            "skip": false,
+            "filename": "UnknownCreature.ldr",
+            "x": 14.33,
+            "y": 0,
+            "z": -2.283,
+            "r": 225
+        },
+        {
+            "comment": "Mission 10",
+            "skip": false,
+            "filename": "Submarine.ldr",
+            "x": -1.855,
+            "y": 0.125,
+            "z": -24.05,
+            "r": 45
+        },
+        {
+            "comment": "Mission 11",
+            "skip": false,
+            "filename": "Sonar.ldr",
+            "x": 17.72,
+            "y": 0,
+            "z": -18,
+            "r": 270
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Whale.ldr",
+            "x": 36.6,
+            "y": 0.125,
+            "z": -19,
+            "r": 225
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Krill.ldr",
+            "x": 30.51,
+            "y": 0,
+            "z": -12.91,
+            "r": [ 45, 225 ]
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Krill.ldr",
+            "x": 23.9,
+            "y": 0,
+            "z": -9.96,
+            "r": [ 135, 315 ]
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Krill.ldr",
+            "x": 23.54,
+            "y": 0,
+            "z": 0.9,
+            "r": [ 45, 225 ]
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Krill.ldr",
+            "x": -8.07,
+            "y": 0,
+            "z": 0.83,
+            "r": [ 45, 225 ]
+        },
+        {
+            "comment": "Mission 12",
+            "skip": false,
+            "filename": "Krill.ldr",
+            "x": -23.23,
+            "y": 0,
+            "z": -9.84,
+            "r": [ 90, 270 ]
+        },
+        {
+            "comment": "Mission 13",
+            "skip": false,
+            "filename": "ChangeShippingLanes.ldr",
+            "x": 33.19,
+            "y": 0,
+            "z": -5.04,
+            "r": 225
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "WaterSample.ldr",
+            "x": -19.6,
+            "y": 0.125,
+            "z": -6.93,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "SeaBedSample.ldr",
+            "x": -4.17,
+            "y": 0,
+            "z": -20.2,
+            "r": 0
+        },
+        {
+            "comment": "Mission 14",
+            "skip": false,
+            "filename": "PlanktonSample.ldr",
+            "x": 37.48,
+            "y": 0,
+            "z": -10.55,
+            "r": 90
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "WestDock.ldr",
+            "x": -17.2,
+            "y": 0,
+            "z": 19.72,
+            "r": 0
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "Ship.ldr",
+            "x": -14.32,
+            "y": -0.03125,
+            "z": 19.57,
+            "r": 0
+        },
+        {
+            "comment": "Mission 15",
+            "skip": false,
+            "filename": "EastDock.ldr",
+            "x": 17.87,
+            "y": 0,
+            "z": 19.76,
+            "r": 180
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": -3.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": -2.25,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": -0.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": 0.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": 2.25,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        },
+        {
+            "comment": "Precision",
+            "skip": false,
+            "filename": "Precision.ldr",
+            "x": 3.75,
+            "y": 2.5,
+            "z": 23.25,
+            "r": "random"
+        }
+    ]
+}
