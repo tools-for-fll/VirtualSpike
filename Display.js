@@ -41,6 +41,8 @@ let loaded = 0;
 
 let cameraMode = 0;
 
+let cameraR = undefined;
+
 let view3D = false;
 
 let birdD = inchToLDU(18);
@@ -568,10 +570,18 @@ setRobotPosition(x, y, r)
     robot.rotation.y = toRadians(90 - robotR);
   }
 
+  if((cameraMode == 1) || (cameraMode == 2))
+  {
+    if((cameraR == undefined) || (Math.abs(cameraR - (180 - robotR)) > 1))
+    {
+      cameraR = 180 - robotR;
+    }
+  }
+
   if(cameraMode == 1)
   {
-    var cx = robotX + (birdD * Math.cos(toRadians(180 - robotR)));
-    var cy = robotY + (birdD * Math.sin(toRadians(180 - robotR)));
+    var cx = robotX + (birdD * Math.cos(toRadians(cameraR)));
+    var cy = robotY + (birdD * Math.sin(toRadians(cameraR)));
 
     controls.reset();
     camera.position.set(cx, inchToLDU(18), cy);
@@ -582,10 +592,10 @@ setRobotPosition(x, y, r)
 
   if(cameraMode == 2)
   {
-    var cx = robotX + (eyeX * Math.cos(toRadians(180 - robotR)));
-    var cy = robotY + (eyeX * Math.sin(toRadians(180 - robotR)));
-    var lx = robotX - (eyeD * Math.cos(toRadians(180 - robotR)));
-    var ly = robotY - (eyeD * Math.sin(toRadians(180 - robotR)));
+    var cx = robotX + (eyeX * Math.cos(toRadians(cameraR)));
+    var cy = robotY + (eyeX * Math.sin(toRadians(cameraR)));
+    var lx = robotX - (eyeD * Math.cos(toRadians(cameraR)));
+    var ly = robotY - (eyeD * Math.sin(toRadians(cameraR)));
 
     controls.reset();
     camera.position.set(cx, eyeY, cy);
