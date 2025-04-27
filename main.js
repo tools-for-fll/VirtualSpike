@@ -7,6 +7,7 @@ import "./jquery.js";
 import * as Config from "./Config.js";
 import * as Display from "./Display.js";
 import * as Editor from "./Editor.js";
+import * as dialog from "./dialog.js";
 import * as sim from "./sim.js";
 import * as hubs from "./pybricks/hubs.js";
 import * as parameters from "./pybricks/parameters.js";
@@ -26,15 +27,19 @@ let vRatioSave = undefined;
 
 let interp = null;
 
+let execution = null;
+
+let context = null;
+
 const scope =
 {
   __name__: "__main__",
   print: consolePrint,
   range: range,
-  simDone: btnStop
+  simDone: simDone
 };
 
-$("document").ready(init);
+$(init);
 
 function
 init()
@@ -81,7 +86,7 @@ init()
 
   interp = window.jspython.jsPython();
 
-  const AVAILABLE_PACKAGES =
+  const availablePackages =
   {
     "pybricks.hubs": hubs,
     "pybricks.parameters": parameters,
@@ -92,7 +97,7 @@ init()
   };
   interp.registerPackagesLoader((packageName) =>
                                 {
-                                  return(AVAILABLE_PACKAGES[packageName]);
+                                  return(availablePackages[packageName]);
                                 });
 
   $(document).on("keyup", onKeyUp);
@@ -355,25 +360,59 @@ btnPlayPause()
 
   if(button.hasClass("fa-pause"))
   {
-    btnStop();
+    $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
+    sim.pause();
   }
   else
   {
     $("#btn_playpause i").removeClass("fa-play").addClass("fa-pause");
 
-    let source = Editor.bufferContents() + "\nsimDone()";
+    if(execution === null)
+    {
+      Editor.bufferAnnotation();
 
-    sim.reset(false);
+      let source = Editor.bufferContents() + "\nsimDone()";
 
-    source = source.replace(/\ndef /g, "\nasync def ");
+      sim.reset(false);
 
-    await interp.evaluate(source, scope).catch((error) => console.log(error));
-    // XYZZY present error to user in a helpful manner
+      source = source.replace(/\ndef /g, "\nasync def ");
+
+      execution = interp.evaluate(source, scope, "", "main.jspy",
+                                  (ctx) => context = ctx).catch((error) =>
+      {
+        const msg = error.message;
+        const colon1 = msg.indexOf(":");
+        const colon2 = msg.indexOf(":", colon1 + 1);
+
+        const paren1 = msg.indexOf("(", colon1 + 2);
+        const line = parseInt(msg.substr(paren1 + 1));
+
+        const comma = msg.indexOf(",", paren1 + 1);
+        const column = parseInt(msg.substr(comma + 1));
+
+        Editor.bufferAnnotation(line, column, msg.substr(colon2 + 2));
+
+        dialog.alert(Editor.bufferName() + "(" + line + "," + column + "): " +
+                     msg.substr(colon2 + 2));
+
+        $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
+      });
+
+      await execution;
+
+      execution = null;
+
+      context = null;
+    }
+    else
+    {
+      sim.resume();
+    }
   }
 }
 
 function
-btnStop()
+simDone()
 {
   $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
 }
@@ -381,9 +420,14 @@ btnStop()
 function
 btnReset()
 {
-  sim.reset(true);
+  if(context)
+  {
+    context.cancellationToken.cancel = true;
+  }
 
-  btnStop();
+  sim.reset(false);
+
+  $("#btn_playpause i").removeClass("fa-pause").addClass("fa-play");
 }
 
 function

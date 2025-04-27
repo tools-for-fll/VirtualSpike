@@ -17,7 +17,7 @@ import { LDrawConditionalLineMaterial } from "three/addons/materials/LDrawCondit
 
 import { AnaglyphEffect } from "three/addons/effects/AnaglyphEffect.js";
 
-import { fileMap} from "./LDrawMap.js";
+import { fileMap } from "./LDrawMap.js";
 
 let container = null;
 

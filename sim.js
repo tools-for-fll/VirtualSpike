@@ -61,12 +61,17 @@ let previousTime = 0;
 let imuOffset = 0;
 
 /**
+ * A boolean that is **true** when the simulation is paused.
+ */
+let paused = false;
+
+/**
  * Resets the robot simulation.
  *
- * @param soft A boolean that is <b>true</b> if a soft reset should be
- *             performed (maintaining the current set of devices, just
- *             resetting their internal state) or <b>false</b> if a hard reset
- *             should be performed (removing all devices).
+ * @param soft A boolean that is **true** if a soft reset should be performed
+ *             (maintaining the current set of devices, just resetting their
+ *             internal state) or **false** if a hard reset should be performed
+ *             (removing all devices).
  */
 export function
 reset(soft)
@@ -96,6 +101,27 @@ reset(soft)
   }
   else
   {
+    // Loop through all the ports.
+    for(let port = parameters.Port.A; port <= parameters.Port.F; port++)
+    {
+      // See if there is a Motor connected to this port.
+      if(pupdevices.deviceType[port] === pupdevices.DeviceType.Motor)
+      {
+        // Send the completion event for this port.  This might be a harmless
+        // NOP.
+        sendEvent(portEvent(pupdevices.devicesUsed[port]._port));
+      }
+    }
+
+    // Loop through all the drive bases.
+    //
+    for(let base = 0; base < robotics.driveBase.length; base++)
+    {
+      // Send the completion event for this drive base.  This might be a
+      // harmless NOP.
+      sendEvent(baseEvent(robotics.driveBase[base]._idx));
+    }
+
     // For a hard reset, empty all the device arrays.
     while(pupdevices.deviceType.length !== 0)
     {
@@ -135,6 +161,39 @@ reset(soft)
 
   // Reset the previous time so that the simulation starts over from scratch.
   previousTime = 0;
+
+  // The simulation is not paused by default.
+  paused = false;
+}
+
+/**
+ * Pauses execution of the simulation.
+ */
+export function
+pause()
+{
+  paused = true;
+}
+
+/**
+ * Resumes execution of the simulation.
+ */
+export function
+resume()
+{
+  paused = false;
+}
+
+/**
+ * Determines if the simulation is paused.
+ *
+ * @returns **true** if the simulation is paused and **false** if it is
+ *          running.
+ */
+export function
+isPaused()
+{
+  return(paused);
 }
 
 /**
@@ -346,8 +405,8 @@ updateRobot()
     let deltaR = pupdevices.devicesUsed[robotRight]._delta;
 
     // Scale the rotation to simulate the slip that occurs with a real robot.
-    deltaL *= 0.975;
-    deltaR *= 0.975;
+    deltaL *= 0.9825;
+    deltaR *= 0.9825;
 
     // Convert the rotation into inches.
     deltaL = (deltaL * robotWheel * Math.PI) / (25.4 * 360);
@@ -644,6 +703,13 @@ updateDriveBase(delta)
 export function
 step()
 {
+  // There is nothing to do if the simulation is paused.
+  if(paused)
+  {
+    previousTime = 0;
+    return;
+  }
+
   // Get the current time.
   let now = Date.now();
 

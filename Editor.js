@@ -155,6 +155,24 @@ bufferSaved()
 }
 
 export function
+bufferAnnotation(line = -1, column = -1, text = "", type = "error")
+{
+  if((line === -1) && (column === -1))
+  {
+    editor.session.setAnnotations();
+  }
+  else
+  {
+    editor.session.setAnnotations([{
+      row: line - 1,
+      colunm: column + 1,
+      text: text,
+      type: type
+    }]);
+  }
+}
+
+export function
 bufferExists(name)
 {
   let tabs = $("#editor .nav li");
