@@ -144,7 +144,14 @@ class _DriveBase
     this._mode = this.modeCurve;
     this._target_radius = radius;
     this._start_angle = hubs._hub.imu.heading();
-    this._target_angle = angle;
+    if(radius < 0)
+    {
+      this._target_angle = this._start_angle - angle;
+    }
+    else
+    {
+      this._target_angle = this._start_angle + angle;
+    }
 
     if(wait)
     {
@@ -242,14 +249,28 @@ class _DriveBase
     this._mode = this.modeDrive;
 
     // Limit the speed and turn rate if necessary.
-    if(speed > this._straight_speed)
+    if((speed > 0) && (speed > this._straight_speed))
     {
       speed = this._straight_speed;
     }
-    if(turn_rate > this._turn_rate)
+    if((speed < 0) && (Math.abs(speed) > this._straight_speed))
+    {
+      speed = -this._straight_speed;
+    }
+    if((turn_rate > 0) && (turn_rate > this._turn_rate))
     {
       turn_rate = this._turn_rate;
     }
+    if((turn_rate < 0) && (Math.abs(turn_rate > this._turn_rate)))
+    {
+      turn_rate = -this._turn_rate;
+    }
+
+    // Convert the speed from mm/s to deg/s.
+    speed = (360 * speed) / (Math.PI * this._wheel_diameter);
+
+    // Convert the turn rate from deg/s of the robot to deg/s of the wheel.
+    turn_rate = turn_rate * this._axle_track / this._wheel_diameter;
 
     // See if the turn rate is zero (meaning the robot should drive straight).
     if(turn_rate === 0)
@@ -262,27 +283,19 @@ class _DriveBase
     // See if the speed is zero (meaning the robot should spin in place).
     else if(speed === 0)
     {
-      // See if the robot is turning to the left.
-      if(turn_rate < 0)
-      {
-        // Run the left motor backward and the right motor forward.
-        speedL = -speed;
-        speedR = speed;
-      }
-      else
-      {
-        // Run the left motor forward and the right motor backward.
-        speedL = speed;
-        speedR = -speed;
-      }
+      // Run the left motor the sign of the turn rate and the right motor the
+      // opposite way.
+      speedL = turn_rate;
+      speedR = -turn_rate;
     }
 
     // Otherwise, the robot is curving.
     else
     {
-      // XYZZY
-      speedL = speed;
-      speedR = speed;
+      // Adjust the speed by the turn rate with opposite signs so the robot
+      // curves.
+      speedL = speed + turn_rate;
+      speedR = speed - turn_rate;
     }
 
     // Start the motors running at the computed speeds.
@@ -295,9 +308,20 @@ class _DriveBase
    */
   stop()
   {
+    // There is nothing to be done if the robot is not moving.
     if(this._mode !== this.modeIdle)
     {
+      // Stop the drive motors.
+      this._left_motor.stop();
+      this._right_motor.stop();
+
+      // Set the mode to idle.
       this._mode = this.modeIdle;
+
+      // Send the drive base done event, so that any pending wait will be
+      // completed (really shouldn't happen, since there is no way to call this
+      // while waiting for a previous command; however, this is harmless either
+      // way).
       sim.sendEvent(sim.baseEvent(this._idx));
     }
   }
@@ -307,9 +331,20 @@ class _DriveBase
    */
   brake()
   {
+    // There is nothing to be done if the robot is not moving.
     if(this._mode !== this.modeIdle)
     {
+      // Stop the drive motors.
+      this._left_motor.stop();
+      this._right_motor.stop();
+
+      // Set the mode to idle.
       this._mode = this.modeIdle;
+
+      // Send the drive base done event, so that any pending wait will be
+      // completed (really shouldn't happen, since there is no way to call this
+      // while waiting for a previous command; however, this is harmless either
+      // way).
       sim.sendEvent(sim.baseEvent(this._idx));
     }
   }

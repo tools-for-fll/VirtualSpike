@@ -580,7 +580,7 @@ updateDriveBase(delta)
         // robot.
         if(driveBase._use_gyro)
         {
-          // XYZZY
+          // TODO Implement use_gyro
         }
 
         // Drive the robot.
@@ -632,7 +632,7 @@ updateDriveBase(delta)
         // robot.
         if(driveBase._use_gyro)
         {
-          // XYZZY
+          // TODO Implement use_gyro
         }
 
         // Spin the robot.
@@ -644,10 +644,122 @@ updateDriveBase(delta)
     // See if this drive base is in curve mode.
     if(driveBase._mode === driveBase.modeCurve)
     {
-      // XYZZY
-      //driveBase._target_radius
-      //driveBase._start_angle
-      //driveBase._target_angle
+      let ratio, dI, dO, angle;
+
+      // Get the change in the left and right motors.
+      let deltaL = driveBase._left_motor._delta;
+      let deltaR = driveBase._right_motor._delta;
+
+      // Average the two motors.
+      let delta = (deltaL + deltaR) / 2;
+
+      // Compute the distance the robot drove.
+      let distance = (driveBase._wheel_diameter * Math.PI * delta) / 360;
+
+      // Increment the distance by the distance the robot just drove.
+      driveBase._distance += distance;
+
+      // Average the two motors.  The subtraction is because they are moving in
+      // opposite directions; the normal addition formulation would result in
+      // zero (on average).
+      delta = (deltaL - deltaR) / 2;
+
+      // Determine how far the robot has turned.
+      angle = (delta * driveBase._wheel_diameter) / driveBase._axle_track;
+
+      // Increment the drive base angle by the amount the robot just turned.
+      driveBase._angle += angle;
+
+      // See if the robot was not moving.
+      if((deltaL == 0) && (deltaR == 0))
+      {
+        // The angle the robot curved is zero.
+        angle = 0;
+      }
+
+      // See if the right robot motor turned more than the left robot motor.
+      else if(Math.abs(deltaL) < Math.abs(deltaR))
+      {
+        // Compute the angle that the robot curved to the left.
+        ratio = deltaL / deltaR;
+        dI = (2 * ratio * driveBase._axle_track) / (1 - ratio);
+        dO = dI + (2 * driveBase._axle_track);
+        angle = (-deltaR * driveBase._wheel_diameter) / dO;
+      }
+
+      // Otherwise, the left robot motor turned more than the right robot
+      // motor.
+      else
+      {
+        // Compute the angle that the robot curved to the right.
+        ratio = deltaR / deltaL;
+        dI = (2 * ratio * driveBase._axle_track) / (1 - ratio);
+        dO = dI + (2 * driveBase._axle_track);
+        angle = (deltaL * driveBase._wheel_diameter) / dO;
+      }
+
+      // See if this movement crossed the target angle.
+      if(((driveBase._start_angle < driveBase._target_angle) &&
+          ((driveBase._start_angle + angle) > driveBase._target_angle)) ||
+         ((driveBase._start_angle > driveBase._target_angle) &&
+          ((driveBase._start_angle + angle) < driveBase._target_angle)))
+      {
+        // Stop the drive motors.
+        driveBase._left_motor.stop();
+        driveBase._right_motor.stop();
+
+        // Set the mode to idle.
+        driveBase._mode = driveBase.modeIdle;
+      }
+      else
+      {
+        let speedL, speedR;
+
+        // Increment the starting angle by the amount the robot just curved.
+        driveBase._start_angle += angle;
+
+        // Compute the ratio of the motors, based on the radius of the curve.
+        dO = (2 * Math.abs(driveBase._target_radius)) + driveBase._axle_track;
+        ratio = (dO - (2 * driveBase._axle_track)) / dO;
+
+        // A negative radius moves the robot backward.
+        if(driveBase._target_radius < 0)
+        {
+          // Curve the robot the appropriate direction based on the relation of
+          // the current angle to the target angle, while moving backward.
+          if(driveBase._start_angle < driveBase._target_angle)
+          {
+            speedR = -driveBase._straight_speed;
+            speedL = speedR * ratio;
+          }
+          else
+          {
+            speedL = -driveBase._straight_speed;
+            speedR = speedL * ratio;
+          }
+        }
+
+        // Otherwise, the robot is moving forward.
+        else
+        {
+          // Curve the robot the appropriate direction based on the relation of
+          // the current angle to the target angle, while moving forward.
+          if(driveBase._start_angle < driveBase._target_angle)
+          {
+            speedL = driveBase._straight_speed;
+            speedR = speedL * ratio;
+          }
+          else
+          {
+            speedR = driveBase._straight_speed;
+            speedL = speedR * ratio;
+          }
+        }
+
+        // Curve the robot.
+        driveBase._left_motor.run(speedL);
+        driveBase._right_motor.run(speedR);
+      }
     }
 
     // See if the drive base is in drive mode.
@@ -684,7 +796,46 @@ updateDriveBase(delta)
       // Otherwise, the robot drove along a curve.
       else
       {
-        // XYZZY
+        let ratio, dI, dO, angle;
+
+        // If neither motor moved, the angle turned is zero.
+        if((deltaL == 0) && (deltaR == 0))
+        {
+          angle = 0;
+        }
+
+        // See if the robot drove to the left.
+        else if(Math.abs(deltaL) < Math.abs(deltaR))
+        {
+          // Compute the outer diameter of the curve.
+          ratio = deltaL / deltaR;
+          dI = (2 * ratio * driveBase._axle_track) / (1 - ratio);
+          dO = dI + (2 * driveBase._axle_track);
+
+          // Compute the angle that the robot drove along the curve.
+          angle = (deltaR * driveBase._wheel_diameter) / dO;
+        }
+        else
+        {
+          // Compute the outer diameter of the curve.
+          ratio = deltaR / deltaL;
+          dI = (2 * ratio * driveBase._axle_track) / (1 - ratio);
+          dO = dI + (2 * driveBase._axle_track);
+
+          // Compute the angle that the robot drove along the curve.
+          angle = (deltaL * driveBase._wheel_diameter) / dO;
+        }
+
+        // Compute the distance that the robot drove.
+        let distance = ((driveBase._wheel_diameter * Math.PI *
+                         (deltaL + deltaR) / 2) / 360);
+
+        // Increment the robot's distance traveled by the distance it just
+        // drove.
+        driveBase._distance += distance;
+
+        // Increment the robot's angle by the amount it just curved.
+        driveBase._angle += angle;
       }
     }
 
