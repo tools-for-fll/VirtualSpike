@@ -405,8 +405,6 @@ init()
   var height = container.clientHeight;
 
   camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
-  camera.position.set(0, 300, 300);
-  camera.lookAt(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -524,9 +522,17 @@ setView3D()
 export function
 setCameraPerspective()
 {
+  container = $("#field")[0];
+
+  let width = container.clientWidth;
+  let height = container.clientHeight;
+  let size = Math.min(width, height * 2) * 0.9;
+  let pos = 48 * 16 * height / size;
+
   cameraMode = 0;
   controls.reset();
-  camera.position.set(0, 350, 350);
+  camera.aspect = width / height;
+  camera.position.set(0, pos * 0.7071, pos * 0.7071);
   camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
 }
@@ -534,9 +540,17 @@ setCameraPerspective()
 export function
 setCameraOverhead()
 {
+  container = $("#field")[0];
+
+  let width = container.clientWidth;
+  let height = container.clientHeight;
+  let size = Math.min(width, height * 2) * 0.9;
+  let pos = 48 * 16 * height / size;
+
   cameraMode = 0;
   controls.reset();
-  camera.position.set(0, 450, 0);
+  camera.aspect = width / height;
+  camera.position.set(0, pos, 0);
   camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
 }
