@@ -425,7 +425,9 @@ init()
   environment.dispose();
 
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.minDistance = 10;
   controls.maxPolarAngle = 0.4 * Math.PI;
+  controls.screenSpacePanning = false;
 
   const resizeObserver = new ResizeObserver(onContainerResize);
   resizeObserver.observe(container);
