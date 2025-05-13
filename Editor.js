@@ -270,6 +270,7 @@ robotStartPosition(...args)
   else
   {
     // Update the starting position from the supplied values.
+    ret = [];
     ret[0] = args[0];
     if(args.length > 1)
     {
@@ -282,7 +283,7 @@ robotStartPosition(...args)
 
     // Construct the starting position comment.
     let str = `# start_position: ${ret[0].toFixed(2)} ${ret[1].toFixed(2)} ` +
-              `${ret[2].toFixed(0)}`;
+              `${ret[2].toFixed(1)}`;
 
     // Find the existing starting position comment and replace it with the new
     // one.

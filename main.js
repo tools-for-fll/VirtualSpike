@@ -557,7 +557,10 @@ onKeyUp(e)
     return;
   }
 
-  // XYZZY Ignore if running...
+  if(execution !== null)
+  {
+    return;
+  }
 
   let [ x, y, r ] = Editor.robotStartPosition();
   let delta;
@@ -575,7 +578,7 @@ onKeyUp(e)
     delta = 1.0;
   }
 
-  if(e.key === "ArrowLeft")
+  if(e.which === 37)
   {
     if((e.shiftKey === true) && (e.altKey === true))
     {
@@ -592,7 +595,7 @@ onKeyUp(e)
     }
   }
 
-  if(e.key === "ArrowRight")
+  if(e.which === 39)
   {
     if((e.shiftKey === true) && (e.altKey === true))
     {
@@ -609,27 +612,27 @@ onKeyUp(e)
     }
   }
 
-  if(e.key === "ArrowUp")
+  if(e.which === 38)
   {
     y += delta;
     update = true;
   }
 
-  if(e.key === "ArrowDown")
+  if(e.which === 40)
   {
     y -= delta;
     update = true;
   }
 
-  if((e.key === "n") || (e.key === "N"))
+  if(e.which === 188)
   {
-    r += (delta === 1) ? 10 : 1;
+    r += delta * 10;
     update = true;
   }
 
-  if((e.key === "m") || (e.key === "M"))
+  if(e.which === 190)
   {
-    r -= (delta === 1) ? 10 : 1;
+    r -= delta * 10;
     update = true;
   }
 
