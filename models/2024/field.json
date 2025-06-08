@@ -39,6 +39,7 @@
         {
             "comment": "Mission 4",
             "skip": false,
+            "game_piece": true,
             "filename": "Pedestal.ldr",
             "x": -43,
             "y": 0,
@@ -139,6 +140,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -44.2,
             "y": 0.1,
@@ -148,6 +150,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -43,
             "y": 0.1,
@@ -157,6 +160,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -41.8,
             "y": 0.1,
@@ -166,6 +170,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -44.8,
             "y": 0.1,
@@ -175,6 +180,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -43.6,
             "y": 0.1,
@@ -184,6 +190,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -42.4,
             "y": 0.1,
@@ -193,6 +200,7 @@
         {
             "comment": "Mission 14",
             "skip": false,
+            "game_piece": true,
             "filename": "Audience.ldr",
             "x": -41.2,
             "y": 0.1,
@@ -202,6 +210,7 @@
         {
             "comment": "Mission 15",
             "skip": false,
+            "game_piece": true,
             "filename": "Sam.ldr",
             "x": -28,
             "y": 0,
@@ -211,6 +220,7 @@
         {
             "comment": "Mission 15",
             "skip": false,
+            "game_piece": true,
             "filename": "Anna.ldr",
             "x": -43,
             "y": 0,
@@ -220,6 +230,7 @@
         {
             "comment": "Mission 15",
             "skip": false,
+            "game_piece": true,
             "filename": "Noah.ldr",
             "x": -14.6,
             "y": 0,
@@ -229,6 +240,7 @@
         {
             "comment": "Mission 15",
             "skip": false,
+            "game_piece": true,
             "filename": "Izzy.ldr",
             "x": 18.05,
             "y": 0,
@@ -238,6 +250,7 @@
         {
             "comment": "Mission 15",
             "skip": false,
+            "game_piece": true,
             "filename": "Emily.ldr",
             "x": 15.7,
             "y": 0,
@@ -247,6 +260,7 @@
         {
             "comment": "Precision",
             "skip": false,
+            "game_piece": true,
             "filename": "Precision.ldr",
             "x": -3.75,
             "y": 2.5,
@@ -256,6 +270,7 @@
         {
             "comment": "Precision",
             "skip": false,
+            "game_piece": true,
             "filename": "Precision.ldr",
             "x": -2.25,
             "y": 2.5,
@@ -265,6 +280,7 @@
         {
             "comment": "Precision",
             "skip": false,
+            "game_piece": true,
             "filename": "Precision.ldr",
             "x": -0.75,
             "y": 2.5,
@@ -274,6 +290,7 @@
         {
             "comment": "Precision",
             "skip": false,
+            "game_piece": true,
             "filename": "Precision.ldr",
             "x": 0.75,
             "y": 2.5,
@@ -283,6 +300,7 @@
         {
             "comment": "Precision",
             "skip": false,
+            "game_piece": true,
             "filename": "Precision.ldr",
             "x": 2.25,
             "y": 2.5,
@@ -292,6 +310,7 @@
         {
             "comment": "Precision",
             "skip": false,
+            "game_piece": true,
             "filename": "Precision.ldr",
             "x": 3.75,
             "y": 2.5,

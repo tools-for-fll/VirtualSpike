@@ -75,10 +75,52 @@ init()
     Editor.robotDefaultModel(robot);
   }
 
+  const c_wall = storage.getItem("config/pause_wall");
+  if((c_wall === null) || (c_wall === "0"))
+  {
+    $("#config #c_wall_yes").removeClass("selected");
+    $("#config #c_wall_no").addClass("selected");
+  }
+  else
+  {
+    $("#config #c_wall_yes").addClass("selected");
+    $("#config #c_wall_no").removeClass("selected");
+  }
+
+  const c_model = storage.getItem("config/pause_model");
+  if((c_model === null) || (c_model === "1"))
+  {
+    $("#config #c_model_yes").addClass("selected");
+    $("#config #c_model_no").removeClass("selected");
+  }
+  else
+  {
+    $("#config #c_model_yes").removeClass("selected");
+    $("#config #c_model_no").addClass("selected");
+  }
+
+  const c_game_piece = storage.getItem("config/pause_game_piece");
+  if((c_game_piece === null) || (c_game_piece === "0"))
+  {
+    $("#config #c_game_piece_yes").removeClass("selected");
+    $("#config #c_game_piece_no").addClass("selected");
+  }
+  else
+  {
+    $("#config #c_game_piece_yes").addClass("selected");
+    $("#config #c_game_piece_no").removeClass("selected");
+  }
+
   $("#config #season_select").on("change", selectSeason);
   $("#config #robot_select").on("change", selectRobot);
   $("#config #robot_delete").on("click", deleteRobot);
   $("#config #robot_upload").on("click", uploadRobot);
+  $("#config #c_wall_yes").on("click", onWallClick);
+  $("#config #c_wall_no").on("click", onWallClick);
+  $("#config #c_model_yes").on("click", onModelClick);
+  $("#config #c_model_no").on("click", onModelClick);
+  $("#config #c_game_piece_yes").on("click", onGamePieceClick);
+  $("#config #c_game_piece_no").on("click", onGamePieceClick);
   $("#config #config_done").on("click", close);
 }
 
@@ -222,6 +264,57 @@ uploadRobot()
   $("#config #robot_file").trigger("click");
 }
 
+function
+onWallClick()
+{
+  if($("#config #c_wall_yes").hasClass("selected"))
+  {
+    $("#config #c_wall_yes").removeClass("selected");
+    $("#config #c_wall_no").addClass("selected");
+    storage.setItem("config/pause_wall", "0");
+  }
+  else
+  {
+    $("#config #c_wall_yes").addClass("selected");
+    $("#config #c_wall_no").removeClass("selected");
+    storage.setItem("config/pause_wall", "1");
+  }
+}
+
+function
+onModelClick()
+{
+  if($("#config #c_model_yes").hasClass("selected"))
+  {
+    $("#config #c_model_yes").removeClass("selected");
+    $("#config #c_model_no").addClass("selected");
+    storage.setItem("config/pause_model", "0");
+  }
+  else
+  {
+    $("#config #c_model_yes").addClass("selected");
+    $("#config #c_model_no").removeClass("selected");
+    storage.setItem("config/pause_model", "1");
+  }
+}
+
+function
+onGamePieceClick()
+{
+  if($("#config #c_game_piece_yes").hasClass("selected"))
+  {
+    $("#config #c_game_piece_yes").removeClass("selected");
+    $("#config #c_game_piece_no").addClass("selected");
+    storage.setItem("config/pause_game_piece", "0");
+  }
+  else
+  {
+    $("#config #c_game_piece_yes").addClass("selected");
+    $("#config #c_game_piece_no").removeClass("selected");
+    storage.setItem("config/pause_game_piece", "1");
+  }
+}
+
 export function
 getSeason()
 {
@@ -232,4 +325,22 @@ getSeason()
   }
 
   return($("#config #season_select").val());
+}
+
+export function
+pauseOnWallCollision()
+{
+  return($("#config #c_wall_yes").hasClass("selected"));
+}
+
+export function
+pauseOnModelCollision()
+{
+  return($("#config #c_model_yes").hasClass("selected"));
+}
+
+export function
+pauseOnGamePieceCollision()
+{
+  return($("#config #c_game_piece_yes").hasClass("selected"));
 }

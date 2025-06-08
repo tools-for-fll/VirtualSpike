@@ -103,6 +103,13 @@ init()
   $(document).on("keyup", onKeyUp);
   $(window).on("resize", onResize);
 
+  $(window).on(Display.CollisionWallStart, onCollisionWallStart);
+  $(window).on(Display.CollisionWallEnd, onCollisionWallEnd);
+  $(window).on(Display.CollisionModelStart, onCollisionModellStart);
+  $(window).on(Display.CollisionModelEnd, onCollisionModelEnd);
+  $(window).on(Display.CollisionGamePieceStart, onCollisionGamePieceStart);
+  $(window).on(Display.CollisionGamePieceEnd, onCollisionGamePieceEnd);
+
   onResize();
 }
 
@@ -508,6 +515,8 @@ btnAbout()
   $("#about #btn_license").on("click", () => showLicense("#license"));
   $("#about #btn_three").off("click");
   $("#about #btn_three").on("click", () => showLicense("#three_license"));
+  $("#about #btn_meshbvh").off("click");
+  $("#about #btn_meshbvh").on("click", () => showLicense("#meshbvh_license"));
   $("#about #btn_ace").off("click");
   $("#about #btn_ace").on("click", () => showLicense("#ace_license"));
   $("#about #btn_jspython").off("click");
@@ -545,6 +554,54 @@ btnPortView(port)
   else if(deviceType[port] === pupdevices.DeviceType.UltrasonicSensor)
   {
   }
+}
+
+function
+onCollisionWallStart()
+{
+  $("#c_wall").css("display", "grid");
+  if(Config.pauseOnWallCollision())
+  {
+    btnPlayPause();
+  }
+}
+
+function
+onCollisionWallEnd()
+{
+  $("#c_wall").css("display", "none");
+}
+
+function
+onCollisionModellStart()
+{
+  $("#c_model").css("display", "grid");
+  if(Config.pauseOnModelCollision())
+  {
+    btnPlayPause();
+  }
+}
+
+function
+onCollisionModelEnd()
+{
+  $("#c_model").css("display", "none");
+}
+
+function
+onCollisionGamePieceStart()
+{
+  $("#c_game_piece").css("display", "grid");
+  if(Config.pauseOnGamePieceCollision())
+  {
+    btnPlayPause();
+  }
+}
+
+function
+onCollisionGamePieceEnd()
+{
+  $("#c_game_piece").css("display", "none");
 }
 
 function
@@ -646,8 +703,12 @@ onKeyUp(e)
     {
       r += 360;
     }
-    Editor.robotStartPosition(x, y, r);
-    sim.reset(true);
+
+    if(Display.setRobotPosition(x, y, r))
+    {
+      Editor.robotStartPosition(x, y, r);
+      sim.reset(true);
+    }
   }
 }
 

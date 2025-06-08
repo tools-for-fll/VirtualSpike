@@ -80,11 +80,11 @@ license file in the root directory of this project.
         <button id="btn_showcode" title="Show Code">
           <i class="fa fa-code"></i>
         </button>
-        <button id="btn_config" title="Configuration">
-          <i class="fa fa-cog"></i>
-        </button>
         <button id="btn_fullscreen" title="Toggle Fullscreen">
           <i class="fa fa-arrows-alt"></i>
+        </button>
+        <button id="btn_config" title="Configuration">
+          <i class="fa fa-cog"></i>
         </button>
         <button id="btn_about" title="About">
           <i class="fa fa-question"></i>
@@ -92,7 +92,11 @@ license file in the root directory of this project.
         <span>&#8203;</span>
       </div>
       <div id="content">
-        <div id="field"></div>
+        <div id="field">
+          <span id="c_game_piece">Collision with a game piece!</span>
+          <span id="c_model">Collision with a model!</span>
+          <span id="c_wall">Collision with a wall!</span>
+        </div>
         <div id="vsizer"></div>
         <div id="dev">
           <div id="editor">
@@ -171,6 +175,21 @@ license file in the root directory of this project.
         <button id="robot_upload">Add...</button>
         <br>
         <br>
+        <span class="heading">Pause on collision</span>
+        <hr>
+        <span>Walls</span>
+        <button id="c_wall_yes">Yes</button>
+        <button id="c_wall_no">No</button>
+        <br>
+        <span>Models</span>
+        <button id="c_model_yes">Yes</button>
+        <button id="c_model_no">No</button>
+        <br>
+        <span>Game Pieces</span>
+        <button id="c_game_piece_yes">Yes</button>
+        <button id="c_game_piece_no">No</button>
+        <br>
+        <br>
         <button id="config_done">Done</button>
       </div>
     </dialog>
@@ -198,7 +217,8 @@ license file in the root directory of this project.
           Copyright &copy; 2025 Brian Kircher - <a id="btn_license">License</a>
         </span>
         <span class="powered">
-          Powered by: <a id="btn_three">three.js</a>, <a id="btn_ace">Ace</a>,
+          Powered by: <a id="btn_three">three.js</a>,
+          <a id="btn_meshbvh">three-mesh-bvh</a>, </a><a id="btn_ace">Ace</a>,
           <a id="btn_jspython">JSPython</a>, <a id="btn_ldraw">LDraw</a>,
           <a id="btn_jquery">jQuery</a>, and
           <a href="https://fontawesome.com/" target="_blank">FontAwesome 4.7</a>.
@@ -267,6 +287,43 @@ license file in the root directory of this project.
         </p>
         <p>
           Copyright &copy; 2010-2025 three.js authors
+        </p>
+        <p>
+          Permission is hereby granted, free of charge, to any person obtaining
+          a copy of this software and associated documentation files (the
+          "Software"), to deal in the Software without restriction, including
+          without limitation the rights to use, copy, modify, merge, publish,
+          distribute, sublicense, and/or sell copies of the Software, and to
+          permit persons to whom the Software is furnished to do so, subject to
+          the following conditions:
+        </p>
+        <p>
+          The above copyright notice and this permission notice shall be
+          included in all copies or substantial portions of the Software.
+        </p>
+        <p>
+          THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+          EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+          MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+          NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+          BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+          ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+          CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+          SOFTWARE.
+        </p>
+        <button>OK</button>
+      </div>
+    </dialog>
+    <dialog id="meshbvh_license">
+      <div class="license">
+        <p>
+          <a href="https://github.com/gkjohnson/three-mesh-bvh" target="_blank">three-mesh-bvh</a>
+        </p>
+        <p>
+          MIT License
+        </p>
+        <p>
+          Copyright (c) 2018 Garrett Johnson
         </p>
         <p>
           Permission is hereby granted, free of charge, to any person obtaining
@@ -1180,6 +1237,9 @@ license file in the root directory of this project.
     </dialog>
     <dialog id="jspython_license">
       <div class="license">
+        <p>
+          <a href="https://jspython.dev/" target="_blank">JSPython</a>
+        </p>
         <p>
           BSD 3-Clause License
         </p>

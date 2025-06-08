@@ -17,7 +17,24 @@ import { LDrawConditionalLineMaterial } from "three/addons/materials/LDrawCondit
 
 import { AnaglyphEffect } from "three/addons/effects/AnaglyphEffect.js";
 
+import * as MeshBVH from "./MeshBVH.js";
+
 import { fileMap } from "./LDrawMap.js";
+
+export const CollisionWallStart = "CollisionWallStart";
+
+export const CollisionWallEnd = "CollisionWallEnd";
+
+export const CollisionModelStart = "CollisionModelStart";
+
+export const CollisionModelEnd = "CollisionModelEnd";
+
+export const CollisionGamePieceStart = "CollisionGamePieceStart";
+
+export const CollisionGamePieceEnd = "CollisionGamePieceEnd";
+
+THREE.BufferGeometry.prototype.computeBoundsTree = MeshBVH.computeBoundsTree;
+THREE.BufferGeometry.prototype.disposeBoundsTree = MeshBVH.disposeBoundsTree;
 
 let container = null;
 
@@ -65,6 +82,16 @@ let robotR = 0;
 
 let stepFn = null;
 
+let walls = [];
+
+let models = [];
+
+let inCollisionWall = false;
+
+let inCollisionModel = false;
+
+let inCollisionGamePiece = false;
+
 function
 toRadians(angle)
 {
@@ -84,7 +111,8 @@ lduToInch(ldu)
 }
 
 function
-loadLEGOModel(modelFile, modelData, x, y, z, r, rz = undefined, c = false)
+loadLEGOModel(modelFile, modelData, x, y, z, r, rz = undefined, c = false,
+              gp = false)
 {
   let item;
 
@@ -118,15 +146,32 @@ loadLEGOModel(modelFile, modelData, x, y, z, r, rz = undefined, c = false)
       group.rotation.z = item.rz;
     }
 
+    if(item.gp !== false)
+    {
+      group.game_piece = true;
+    }
+
     group.scale.x = 0.1;
     group.scale.y = 0.1;
     group.scale.z = 0.1;
+
+    for(var i = 0; i < group.children.length; i++)
+    {
+      if(group.children[i].type === "Mesh")
+      {
+        group.children[i].geometry.computeBoundsTree();
+      }
+    }
 
     scene.add(group);
 
     if(item.c)
     {
       robot = group;
+    }
+    else
+    {
+      models.push(group);
     }
 
     loaded++;
@@ -172,7 +217,8 @@ loadLEGOModel(modelFile, modelData, x, y, z, r, rz = undefined, c = false)
                    z: z,
                    r: r,
                    rz: rz,
-                   c: c
+                   c: c,
+                   gp: gp
                  });
 
   if(count == 1)
@@ -207,12 +253,6 @@ animate()
     controls.update();
   }
 
-  render();
-}
-
-function
-render()
-{
   if(view3D)
   {
     effect.render(scene, camera);
@@ -228,14 +268,12 @@ showProgressBar()
 {
   $("#load_progress span")[0].innerText = 'Loading...';
   $("#load_progress")[0].showModal();
-  $("window").trigger("resize");
-  //console.log("Start: " + Date.now());
+  $(window).trigger("resize");
 }
 
 function
 hideProgressBar()
 {
-  //console.log("End: " + Date.now());
   $("#load_progress")[0].close();
 }
 
@@ -261,6 +299,27 @@ loadField(name)
   for(let idx = scene.children.length - 1; idx >= 0; idx--)
   {
     scene.remove(scene.children[idx]);
+  }
+
+  walls = [];
+  models = [];
+
+  if(inCollisionWall)
+  {
+    $(window).trigger(CollisionWallEnd);
+    inCollisionWall = false;
+  }
+
+  if(inCollisionModel)
+  {
+    $(window).trigger(CollisionModelEnd);
+    inCollisionModel = false;
+  }
+
+  if(inCollisionGamePiece)
+  {
+    $(window).trigger(CollisionGamePieceEnd);
+    inCollisionGamePiece = false;
   }
 
   if(json.mat !== undefined)
@@ -290,23 +349,33 @@ loadField(name)
     material = new THREE.MeshBasicMaterial({color: 0x000000});
     geometry = new THREE.BoxGeometry(inchToLDU(96), inchToLDU(3),
                                      inchToLDU(1.5));
+
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(0, inchToLDU(1.5), inchToLDU(-23.25));
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(0, inchToLDU(1.5), inchToLDU(23.25));
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     geometry = new THREE.BoxGeometry(inchToLDU(1.5), inchToLDU(3),
                                      inchToLDU(48));
+
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(inchToLDU(-47.25), inchToLDU(1.5), 0);
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(inchToLDU(47.25), inchToLDU(1.5), 0);
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     function
     loaded(image)
@@ -317,7 +386,7 @@ loadField(name)
       const geometry = new THREE.BoxGeometry(inchToLDU(matImageWidth), 0,
                                              inchToLDU(matImageHeight));
       const cube = new THREE.Mesh(geometry, material);
-      cube.position.set(0, inchToLDU(0.5), 0);
+      cube.position.set(0, inchToLDU(0.51), 0);
       scene.add(cube);
     }
 
@@ -336,23 +405,33 @@ loadField(name)
     material = new THREE.MeshBasicMaterial({color: 0x000000});
     geometry = new THREE.BoxGeometry(inchToLDU(96), inchToLDU(3),
                                      inchToLDU(1.5));
+
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(0, inchToLDU(1.5), inchToLDU(-23.25));
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(0, inchToLDU(1.5), inchToLDU(23.25));
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     geometry = new THREE.BoxGeometry(inchToLDU(1.5), inchToLDU(3),
                                      inchToLDU(48));
+
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(inchToLDU(-47.25), inchToLDU(1.5), 0);
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
 
     cube = new THREE.Mesh(geometry, material);
     cube.position.set(inchToLDU(47.25), inchToLDU(1.5), 0);
+    cube.geometry.computeBoundsTree();
     scene.add(cube);
+    walls.push(cube);
   }
 
   if(json.models !== undefined)
@@ -371,6 +450,7 @@ loadField(name)
       let z = inchToLDU(model.z);
       let r;
       let rz = undefined;
+      let gp = false;
 
       if(Array.isArray(model.r))
       {
@@ -391,7 +471,13 @@ loadField(name)
         rz = toRadians(model.rz);
       }
 
-      loadLEGOModel(`models/${name}/${model.filename}`, null, x, y, z, r, rz);
+      if(model.game_piece !== undefined)
+      {
+        gp = model.game_piece
+      }
+
+      loadLEGOModel(`models/${name}/${model.filename}`, null, x, y, z, r, rz,
+                    false, gp);
     }
   }
 }
@@ -485,6 +571,24 @@ loadRobot(name)
     robotName = name;
     loadLEGOModel(null, text, robotX, 0, robotY, robotR, undefined, true);
   }
+
+  if(inCollisionWall)
+  {
+    $(window).trigger(CollisionWallEnd);
+    inCollisionWall = false;
+  }
+
+  if(inCollisionModel)
+  {
+    $(window).trigger(CollisionModelEnd);
+    inCollisionModel = false;
+  }
+
+  if(inCollisionGamePiece)
+  {
+    $(window).trigger(CollisionGamePieceEnd);
+    inCollisionGamePiece = false;
+  }
 }
 
 export function
@@ -532,7 +636,12 @@ setCameraPerspective()
   let pos = 48 * 16 * height / size;
 
   cameraMode = 0;
+
   controls.reset();
+  controls.enablePan = true;
+  controls.enableRotate = true;
+  controls.enableZoom = true;
+
   camera.aspect = width / height;
   camera.position.set(0, pos * 0.7071, pos * 0.7071);
   camera.lookAt(0, 0, 0);
@@ -550,63 +659,42 @@ setCameraOverhead()
   let pos = 48 * 16 * height / size;
 
   cameraMode = 0;
+
   controls.reset();
+  controls.enablePan = true;
+  controls.enableRotate = true;
+  controls.enableZoom = true;
+
   camera.aspect = width / height;
   camera.position.set(0, pos, 0);
   camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
 }
 
-export function
-setCameraBirdsEye()
+function
+updateCamera()
 {
-  cameraMode = 1;
-}
-
-export function
-setCameraRobot()
-{
-  cameraMode = 2;
-}
-
-export function
-setRobotPosition(x, y, r)
-{
-  x = x - 46.5;
-  y = 22.5 - y;
-
-  robotX = inchToLDU(x);
-  robotY = inchToLDU(y);
-  robotR = r;
-
-  if(robot != null)
+  if((cameraMode === 1) || (cameraMode === 2))
   {
-    robot.position.x = robotX;
-    robot.position.z = robotY;
-    robot.rotation.y = toRadians(90 - robotR);
-  }
-
-  if((cameraMode == 1) || (cameraMode == 2))
-  {
-    if((cameraR == undefined) || (Math.abs(cameraR - (180 - robotR)) > 1))
+    if((cameraR === undefined) || (Math.abs(cameraR - (180 - robotR)) > 1))
     {
       cameraR = 180 - robotR;
     }
   }
 
-  if(cameraMode == 1)
+  if(cameraMode === 1)
   {
     var cx = robotX + (birdD * Math.cos(toRadians(cameraR)));
     var cy = robotY + (birdD * Math.sin(toRadians(cameraR)));
 
     controls.reset();
+
     camera.position.set(cx, inchToLDU(18), cy);
     camera.lookAt(robotX, 0, robotY);
-
     camera.updateProjectionMatrix();
   }
 
-  if(cameraMode == 2)
+  if(cameraMode === 2)
   {
     var cx = robotX + (eyeX * Math.cos(toRadians(cameraR)));
     var cy = robotY + (eyeX * Math.sin(toRadians(cameraR)));
@@ -614,11 +702,196 @@ setRobotPosition(x, y, r)
     var ly = robotY - (eyeD * Math.sin(toRadians(cameraR)));
 
     controls.reset();
+
     camera.position.set(cx, eyeY, cy);
     camera.lookAt(lx, 0, ly);
-
     camera.updateProjectionMatrix();
   }
+}
+
+export function
+setCameraBirdsEye()
+{
+  cameraMode = 1;
+
+  controls.enablePan = false;
+  controls.enableRotate = false;
+  controls.enableZoom = false;
+
+  updateCamera();
+}
+
+export function
+setCameraRobot()
+{
+  cameraMode = 2;
+
+  controls.enablePan = false;
+  controls.enableRotate = false;
+  controls.enableZoom = false;
+
+  updateCamera();
+}
+
+export function
+setRobotPosition(x, y, r)
+{
+  if(robot === null)
+  {
+    return(false);
+  }
+
+  const oldX = robot.position.x;
+  const oldY = robot.position.z;
+  const oldR = robot.rotation.y;
+
+  const nx = inchToLDU(x - 46.5);
+  const ny = inchToLDU(22.5 - y);
+  const nr = toRadians(90 - r);
+
+  if((oldX === nx) && (oldY === ny) && (oldR === nr))
+  {
+    return(true);
+  }
+
+  robot.position.x = nx;
+  robot.position.z = ny;
+  robot.rotation.y = nr;
+
+  robot.updateMatrixWorld(true);
+
+  let collisionModel = false;
+  let collisionGamePiece = false;
+  let collisionWall = false;
+
+  for(let robotIdx = 0;
+      (robotIdx < robot.children.length) &&
+      (!collisionModel || !collisionGamePiece || !collisionWall); robotIdx++)
+  {
+    let robotChild = robot.children[robotIdx];
+
+    if(robotChild.type !== "Mesh")
+    {
+      continue;
+    }
+
+    let robotTransform = new THREE.Matrix4().copy(robotChild.matrixWorld).
+                             invert();
+    let robotBounds = robotChild.geometry.boundsTree;
+
+    for(let wallIdx = 0; (wallIdx < walls.length) && !collisionWall; wallIdx++)
+    {
+      const transform = new THREE.Matrix4().copy(robotTransform).
+                            multiply(walls[wallIdx].matrixWorld);
+
+      if(robotBounds.intersectsGeometry(walls[wallIdx].geometry, transform))
+      {
+        collisionWall = true;
+      }
+    }
+
+    for(let modelIdx = 0; (modelIdx < models.length) &&
+        (!collisionModel || !collisionGamePiece); modelIdx++)
+    {
+      for(let groupIdx = 0;
+          (groupIdx < models[modelIdx].children.length) &&
+          (!collisionModel || !collisionGamePiece); groupIdx++)
+      {
+        let modelChild = models[modelIdx].children[groupIdx];
+
+        if(modelChild.type !== "Mesh")
+        {
+          continue;
+        }
+
+        const transform = new THREE.Matrix4().copy(robotTransform).
+                              multiply(modelChild.matrixWorld);
+
+        if(robotBounds.intersectsGeometry(modelChild.geometry, transform))
+        {
+          if((models[modelIdx].game_piece !== undefined) &&
+             (models[modelIdx].game_piece === true))
+          {
+            collisionGamePiece = true;
+          }
+          else
+          {
+            collisionModel = true;
+          }
+        }
+      }
+    }
+  }
+
+  if(collisionWall)
+  {
+    robot.position.x = oldX;
+    robot.position.z = oldY;
+    robot.rotation.y = oldR;
+
+    robot.updateMatrixWorld(true);
+  }
+  else
+  {
+    robotX = nx;
+    robotY = ny;
+    robotR = r;
+
+    updateCamera();
+  }
+
+  if(collisionWall)
+  {
+    if(!inCollisionWall)
+    {
+      $(window).trigger(CollisionWallStart);
+      inCollisionWall = true;
+    }
+  }
+  else
+  {
+    if(inCollisionWall)
+    {
+      $(window).trigger(CollisionWallEnd);
+      inCollisionWall = false;
+    }
+  }
+
+  if(collisionModel)
+  {
+    if(!inCollisionModel)
+    {
+      $(window).trigger(CollisionModelStart)
+      inCollisionModel = true;
+    }
+  }
+  else
+  {
+    if(inCollisionModel)
+    {
+      $(window).trigger(CollisionModelEnd);
+      inCollisionModel = false;
+    }
+  }
+
+  if(collisionGamePiece)
+  {
+    if(!inCollisionGamePiece)
+    {
+      $(window).trigger(CollisionGamePieceStart);
+      inCollisionGamePiece = true;
+    }
+  }
+  else
+  {
+    if(inCollisionGamePiece)
+    {
+      $(window).trigger(CollisionGamePieceEnd);
+      inCollisionGamePiece = false;
+    }
+  }
+
+  return(!collisionWall);
 }
 
 export function

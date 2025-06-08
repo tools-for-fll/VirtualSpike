@@ -79,6 +79,21 @@ body
   {
     grid-column: 1;
     overflow: hidden;
+    position: relative;
+
+    #c_wall, #c_model, #c_game_piece
+    {
+      align-items: center;
+      background-color: #ff0000;
+      color: #ffffff;
+      display: none;
+      font-size: 1.5em;
+      font-weight: bold;
+      height: 2em;
+      justify-content: center;
+      position: absolute;
+      width: 100%;
+    }
   }
 
   #vsizer
@@ -354,6 +369,41 @@ dialog
   .heading
   {
     font-size: 1.5em;
+  }
+
+  br
+  {
+    clear: both;
+  }
+
+  #c_wall_yes, #c_model_yes, #c_game_piece_yes
+  {
+    border: 0;
+    border-bottom: 2px solid #00ff00;
+    border-right: 2px solid #00ff00;
+    border-top: 2px solid #00ff00;
+    color: #003f00;
+    float: right;
+    margin-bottom: 2px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  #c_wall_no, #c_model_no, #c_game_piece_no
+  {
+    border: 0;
+    border-bottom: 2px solid #00ff00;
+    border-left: 2px solid #00ff00;
+    border-top: 2px solid #00ff00;
+    color: #003f00;
+    float: right;
+    margin-bottom: 2px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .selected
+  {
+    background-color: #00ff00;
+    color: #000000;
   }
 }
 

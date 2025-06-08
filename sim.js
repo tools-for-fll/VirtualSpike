@@ -393,6 +393,10 @@ updateDevices(delta)
 function
 updateRobot()
 {
+  let newX = robotX;
+  let newY = robotY;
+  let newR = robotR;
+
   // Update the position and rotation of the robot based on the drive motor
   // movements (if any).
   if((robotLeft != -1) &&
@@ -418,8 +422,8 @@ updateRobot()
     {
       // Update the robot position by moving it along the current heading by
       // the amount that it moved.
-      robotX += deltaL * Math.cos(robotR * Math.PI / 180);
-      robotY += deltaL * Math.sin(robotR * Math.PI / 180);
+      newX = robotX + (deltaL * Math.cos(robotR * Math.PI / 180));
+      newY = robotY + (deltaL * Math.sin(robotR * Math.PI / 180));
     }
 
     // See if the left motor rotated less thean the right motor.
@@ -459,11 +463,11 @@ updateRobot()
 
       // Translate the position of the robot back to original center of the
       // circle it is following.
-      robotX = nx + cx;
-      robotY = ny + cy;
+      newX = nx + cx;
+      newY = ny + cy;
 
       // Increase the robot rotation by the number of degrees it just traveled.
-      robotR += a;
+      newR = robotR + a;
     }
 
     // Otherwise, the left motor rotated more than the right motor.
@@ -503,19 +507,24 @@ updateRobot()
 
       // Translate the position of the robot back to original center of the
       // circle it is following.
-      robotX = nx + cx;
-      robotY = ny + cy;
+      newX = nx + cx;
+      newY = ny + cy;
 
       // Increase the robot rotation by the number of degrees it just traveled.
-      robotR += a;
+      newR = robotR + a;
     }
   }
 
   // Update the position of the robot.
-  Display.setRobotPosition(robotX, robotY, robotR);
+  if(Display.setRobotPosition(newX, newY, newR))
+  {
+    robotX = newX;
+    robotY = newY;
+    robotR = newR;
 
-  // Update the gyro sensor in the hub.
-  hubs._hub.imu.reset_heading(imuOffset - robotR);
+    // Update the gyro sensor in the hub.
+    hubs._hub.imu.reset_heading(imuOffset - robotR);
+  }
 }
 
 /**
