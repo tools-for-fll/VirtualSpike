@@ -491,7 +491,7 @@ function
 btnAbout()
 {
   function
-  showLicense(license)
+  showLicense(license, filename)
   {
     function
     closeLicense()
@@ -499,10 +499,42 @@ btnAbout()
       $(license).close();
     }
 
-    $(license + " button").off("click");
-    $(license + " button").on("click", closeLicense);
+    function
+    show()
+    {
+      $(license + " button").off("click");
+      $(license + " button").on("click", closeLicense);
 
-    $(license).showModal();
+      $(license).showModal();
+    }
+
+    function
+    done(text)
+    {
+      $("body").append(text);
+      show();
+    }
+
+    function
+    fail()
+    {
+      console.log("Failed to load " + filename + "!");
+    }
+
+    function
+    load()
+    {
+      $.get("licenses/" + filename).done(done).fail(fail);
+    }
+
+    if($(license).length !== 0)
+    {
+      show();
+    }
+    else
+    {
+      load();
+    }
   }
 
   function
@@ -511,23 +543,23 @@ btnAbout()
     $("#about").close();
   }
 
-  $("#about #btn_license").off("click");
-  $("#about #btn_license").on("click", () => showLicense("#license"));
-  $("#about #btn_three").off("click");
-  $("#about #btn_three").on("click", () => showLicense("#three_license"));
-  $("#about #btn_meshbvh").off("click");
-  $("#about #btn_meshbvh").on("click", () => showLicense("#meshbvh_license"));
-  $("#about #btn_ace").off("click");
-  $("#about #btn_ace").on("click", () => showLicense("#ace_license"));
-  $("#about #btn_jspython").off("click");
-  $("#about #btn_jspython").on("click",
-                               () => showLicense("#jspython_license"));
-  $("#about #btn_ldraw").off("click");
-  $("#about #btn_ldraw").on("click", () => showLicense("#ldraw_license"));
-  $("#about #btn_jquery").off("click");
-  $("#about #btn_jquery").on("click", () => showLicense("#jquery_license"));
-  $("#about button").off("click");
-  $("#about button").on("click", close);
+  $("#about #btn_license").off("click").
+    on("click", () => showLicense("#license", "license.html"));
+  $("#about #btn_three").off("click").
+    on("click", () => showLicense("#three_license", "threejs.html"));
+  $("#about #btn_meshbvh").off("click").
+    on("click", () => showLicense("#meshbvh_license", "meshbvhjs.html"));
+  $("#about #btn_ace").off("click").
+    on("click", () => showLicense("#ace_license", "ace.html"));
+  $("#about #btn_jspython").off("click").
+    on("click", () => showLicense("#jspython_license", "jspython.html"));
+  $("#about #btn_ldraw").off("click").
+    on("click", () => showLicense("#ldraw_license", "ldraw.html"));
+  $("#about #btn_jquery").off("click").
+    on("click", () => showLicense("#jquery_license", "jquery.html"));
+  $("#about #btn_fontawesome").off("click").
+    on("click", () => showLicense("#fontawesome_license", "fontawesome.html"));
+  $("#about button").off("click").on("click", close);
 
   $("#about").showModal();
 }
