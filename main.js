@@ -105,7 +105,7 @@ init()
 
   $(window).on(Display.CollisionWallStart, onCollisionWallStart);
   $(window).on(Display.CollisionWallEnd, onCollisionWallEnd);
-  $(window).on(Display.CollisionModelStart, onCollisionModellStart);
+  $(window).on(Display.CollisionModelStart, onCollisionModelStart);
   $(window).on(Display.CollisionModelEnd, onCollisionModelEnd);
   $(window).on(Display.CollisionGamePieceStart, onCollisionGamePieceStart);
   $(window).on(Display.CollisionGamePieceEnd, onCollisionGamePieceEnd);
@@ -591,8 +591,11 @@ btnPortView(port)
 function
 onCollisionWallStart()
 {
+  let button = $("#btn_playpause i");
+
   $("#c_wall").css("display", "grid");
-  if(Config.pauseOnWallCollision())
+
+  if(Config.pauseOnWallCollision() && button.hasClass("fa-pause"))
   {
     btnPlayPause();
   }
@@ -605,10 +608,13 @@ onCollisionWallEnd()
 }
 
 function
-onCollisionModellStart()
+onCollisionModelStart()
 {
+  let button = $("#btn_playpause i");
+
   $("#c_model").css("display", "grid");
-  if(Config.pauseOnModelCollision())
+
+  if(Config.pauseOnModelCollision() && button.hasClass("fa-pause"))
   {
     btnPlayPause();
   }
@@ -623,8 +629,11 @@ onCollisionModelEnd()
 function
 onCollisionGamePieceStart()
 {
+  let button = $("#btn_playpause i");
+
   $("#c_game_piece").css("display", "grid");
-  if(Config.pauseOnGamePieceCollision())
+
+  if(Config.pauseOnGamePieceCollision() && button.hasClass("fa-pause"))
   {
     btnPlayPause();
   }
