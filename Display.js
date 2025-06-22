@@ -148,14 +148,14 @@ loadMat(name, width, height)
                                    inchToLDU(1.5));
 
   cube = new THREE.Mesh(geometry, material);
-  cube.position.set(0, inchToLDU(1.5), inchToLDU(-23.25));
+  cube.position.set(0, inchToLDU(1), inchToLDU(-23.25));
   cube.geometry.computeBoundsTree();
   scene.add(cube);
   table.push(cube);
   walls.push(cube);
 
   cube = new THREE.Mesh(geometry, material);
-  cube.position.set(0, inchToLDU(1.5), inchToLDU(23.25));
+  cube.position.set(0, inchToLDU(1), inchToLDU(23.25));
   cube.geometry.computeBoundsTree();
   scene.add(cube);
   table.push(cube);
@@ -165,14 +165,14 @@ loadMat(name, width, height)
                                    inchToLDU(48));
 
   cube = new THREE.Mesh(geometry, material);
-  cube.position.set(inchToLDU(-47.25), inchToLDU(1.5), 0);
+  cube.position.set(inchToLDU(-47.25), inchToLDU(1), 0);
   cube.geometry.computeBoundsTree();
   scene.add(cube);
   table.push(cube);
   walls.push(cube);
 
   cube = new THREE.Mesh(geometry, material);
-  cube.position.set(inchToLDU(47.25), inchToLDU(1.5), 0);
+  cube.position.set(inchToLDU(47.25), inchToLDU(1), 0);
   cube.geometry.computeBoundsTree();
   scene.add(cube);
   table.push(cube);
@@ -184,14 +184,14 @@ loadMat(name, width, height)
     geometry = new THREE.BoxGeometry(inchToLDU(93), inchToLDU(0.25),
                                      inchToLDU(45));
     cube = new THREE.Mesh(geometry, material);
-    cube.position.set(0, inchToLDU(0.125), 0);
+    cube.position.set(0, inchToLDU(-0.375), 0);
     scene.add(cube);
     table.push(cube);
 
     geometry = new THREE.BoxGeometry(inchToLDU((93 - width) / 2),
                                      inchToLDU(0.25), inchToLDU(45));
     cube = new THREE.Mesh(geometry, material);
-    cube.position.set(inchToLDU((93 + width) / 4), inchToLDU(0.375),
+    cube.position.set(inchToLDU((93 + width) / 4), inchToLDU(-0.125),
                       0);
     cube.geometry.computeBoundsTree();
     scene.add(cube);
@@ -199,7 +199,7 @@ loadMat(name, width, height)
     floor.push(cube);
 
     cube = new THREE.Mesh(geometry, material);
-    cube.position.set(inchToLDU((93 + width) / -4), inchToLDU(0.375),
+    cube.position.set(inchToLDU((93 + width) / -4), inchToLDU(-0.125),
                       0);
     cube.geometry.computeBoundsTree();
     scene.add(cube);
@@ -211,7 +211,7 @@ loadMat(name, width, height)
       geometry = new THREE.BoxGeometry(inchToLDU(width), inchToLDU(0.25),
                                        inchToLDU(45 - height));
       cube = new THREE.Mesh(geometry, material);
-      cube.position.set(0, inchToLDU(0.375),
+      cube.position.set(0, inchToLDU(-0.125),
                         inchToLDU(((45 - height) / 2) - 22.5));
       cube.geometry.computeBoundsTree();
       scene.add(cube);
@@ -228,7 +228,7 @@ loadMat(name, width, height)
       const geometry = new THREE.BoxGeometry(inchToLDU(width), inchToLDU(0.25),
                                              inchToLDU(height));
       const cube = new THREE.Mesh(geometry, material);
-      cube.position.set(0, inchToLDU(0.375), inchToLDU(22.5 - (height / 2)));
+      cube.position.set(0, inchToLDU(-0.125), inchToLDU(22.5 - (height / 2)));
       cube.geometry.computeBoundsTree();
       scene.add(cube);
       table.push(cube);
@@ -250,7 +250,7 @@ loadMat(name, width, height)
     geometry = new THREE.BoxGeometry(inchToLDU(93), inchToLDU(0.5),
                                      inchToLDU(45));
     cube = new THREE.Mesh(geometry, material);
-    cube.position.set(0, inchToLDU(0.25), 0);
+    cube.position.set(0, inchToLDU(-0.25), 0);
     cube.geometry.computeBoundsTree();
     scene.add(cube);
     table.push(cube);
@@ -284,7 +284,7 @@ loadLEGOModel(modelFile, modelData, x, y, z, r, rz = undefined, c = false,
     group = LDrawUtils.mergeObject(group);
 
     group.position.x = item.x;
-    group.position.y = item.y + inchToLDU(0.5);
+    group.position.y = item.y;
     group.position.z = item.z;
     group.rotation.x = Math.PI;
     group.rotation.y = item.r;
@@ -581,7 +581,7 @@ modelGetPosition(uuid = null)
   }
 
   return([ lduToInch(model.position.x), lduToInch(model.position.z),
-           lduToInch(model.position.y) - 0.5, toDegrees(model.rotation.x),
+           lduToInch(model.position.y), toDegrees(model.rotation.x),
            toDegrees(model.rotation.z), toDegrees(model.rotation.y) ]);
 }
 
@@ -613,7 +613,7 @@ modelSetPosition(x, y, z, rx, ry, rz, uuid = null)
 
   model.position.x = inchToLDU(x);
   model.position.z = inchToLDU(y);
-  model.position.y = inchToLDU(z + 0.5);
+  model.position.y = inchToLDU(z);
 
   model.rotation.x = toRadians(rx);
   model.rotation.z = toRadians(ry);
