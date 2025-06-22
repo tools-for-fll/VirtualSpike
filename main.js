@@ -100,7 +100,7 @@ init()
                                   return(availablePackages[packageName]);
                                 });
 
-  $(document).on("keyup", onKeyUp);
+  $(document).on("keydown", onKeyDown);
   $(window).on("resize", onResize);
 
   $(window).on(Display.CollisionWallStart, onCollisionWallStart);
@@ -646,7 +646,7 @@ onCollisionGamePieceEnd()
 }
 
 function
-onKeyUp(e)
+onKeyDown(e)
 {
   let update = false;
 
@@ -676,6 +676,7 @@ onKeyUp(e)
     delta = 1.0;
   }
 
+  // Left arrow
   if(e.which === 37)
   {
     if((e.shiftKey === true) && (e.altKey === true))
@@ -693,6 +694,7 @@ onKeyUp(e)
     }
   }
 
+  // Rigth arrow
   if(e.which === 39)
   {
     if((e.shiftKey === true) && (e.altKey === true))
@@ -710,24 +712,28 @@ onKeyUp(e)
     }
   }
 
+  // Up arrow
   if(e.which === 38)
   {
     y += delta;
     update = true;
   }
 
+  // Down arrow
   if(e.which === 40)
   {
     y -= delta;
     update = true;
   }
 
+  // Comma
   if(e.which === 188)
   {
     r += delta * 10;
     update = true;
   }
 
+  // Period
   if(e.which === 190)
   {
     r -= delta * 10;
