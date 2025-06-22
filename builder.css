@@ -1,0 +1,293 @@
+/*
+ * Copyright (c) 2025 Brian Kircher
+ *
+ * Open Source Software: you can modify and/or share it under the terms of the
+ * BSD license file in the root directory of this project.
+ */
+
+body
+{
+  background-color: #000000;
+  margin: 0;
+  position: fixed;
+}
+
+button
+{
+  background-color: #000000;
+  color: #00ff00;
+}
+
+input[type="text"]
+{
+  background-color: #000000;
+  border: 0;
+  border-bottom: 1px solid #00ff00;
+  color: #00ff00;
+}
+
+.frame
+{
+  display: grid;
+  grid-template-rows: 3em 1fr 3em;
+  height: 100dvh;
+  width: 100dvw;
+}
+
+#controls
+{
+  align-items: center;
+  background-color: #000000;
+  color: #00ff00;
+  display: flex;
+  grid-row: 1;
+  overflow-x: scroll;
+  width: 100%;
+
+  button
+  {
+    border-color: #00ff00;
+    border-width: 2px;
+    height: 2em;
+    margin: 0 0 0 10px;
+    padding: 1px;
+    width: 2em;
+
+    i
+    {
+      font-size: 1.5em;
+    }
+
+    img
+    {
+      height: calc(2em - 6px);
+      width: calc(2em - 6px);
+    }
+  }
+
+  label
+  {
+    font-size: 1.5em;
+    margin: 0 0 0 10px;
+  }
+
+  span
+  {
+    border-left: 1px solid #00ff00;
+    height: 2em;
+    margin: 0 0 0 10px;
+  }
+}
+
+#field
+{
+  grid-row: 2;
+  overflow: hidden;
+}
+
+#footer
+{
+  background-color: #000000;
+  color: #00ff00;
+  display: grid;
+  grid-row: 3;
+  grid-template-columns: 1fr 2fr 1rem 1fr;
+  overflow-x: scroll;
+  width: 100%;
+
+  &.disable
+  {
+    color: #003f00;
+  }
+
+  input[type="checkbox"]
+  {
+    appearance: none;
+    background-color: #000000;
+    color: #00ff00;
+    margin: 0;
+
+    font: inherit;
+    color: currentColor;
+    width: 1em;
+    height: 1em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+  }
+
+  input[type="checkbox"]::before
+  {
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em currentColor;
+  }
+
+  input[type="checkbox"]:checked::before
+  {
+    transform: scale(1);
+  }
+
+  input[type="text"]
+  {
+    font-size: 1.5rem;
+    width: 100%;
+  }
+
+  input[type="text"]:disabled
+  {
+    border-bottom: 1px solid #003f00;
+    color: #003f00;
+  }
+
+  label, span
+  {
+    font-size: 1.5rem;
+    margin: 0 0 0 10px;
+  }
+
+  #filename
+  {
+    align-items: center;
+    display: flex;
+    grid-column: 1;
+  }
+
+  #comment
+  {
+    align-items: center;
+    border-left: 1px solid #00ff00;
+    display: flex;
+    grid-column: 2;
+  }
+
+  #game_piece
+  {
+    align-items: center;
+    border-left: 1px solid #00ff00;
+    display: flex;
+    grid-column: 4;
+  }
+
+  &.disable #comment,
+  &.disable #game_piece
+  {
+    border-left: 1px solid #003f00;
+  }
+}
+
+dialog
+{
+  background-color: #000000;
+  border: 1px solid #00ff00;
+  border-radius: 1em;
+  color: #00ff00;
+  max-height: 80%;
+  max-width: 80%;
+  overflow-y: scroll;
+  padding: 1em;
+
+  &::backdrop
+  {
+    background-color: #000000c0;
+  }
+
+  a
+  {
+    color: #00bf00;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  button
+  {
+    background-color: #000000;
+    border-color: #00ff00;
+    color: #00ff00;
+
+    &:disabled
+    {
+      border-color: #007f00;
+      color: #007f00;
+    }
+  }
+
+  br
+  {
+    clear: both;
+  }
+
+  hr
+  {
+    border: 1px solid #00ff00;
+  }
+
+  select
+  {
+    background-color: #000000;
+    border-color: #00ff00;
+    color: #00ff00;
+  }
+
+  .heading
+  {
+    font-size: 1.5em;
+  }
+}
+
+#alert div,
+#confirm div
+{
+  #message
+  {
+    display: block;
+    text-align: center;
+  }
+
+  #buttons
+  {
+    margin-top: 1em;
+    text-align: center;
+  }
+}
+
+.popup
+{
+  div
+  {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+
+    .message
+    {
+      grid-row: 1;
+    }
+
+    .buttons
+    {
+      display: flex;
+      grid-row: 2;
+      justify-content: center;
+      margin-top: 10px;
+
+      .danger
+      {
+        background-color: #ff0000;
+        color: #ffffff;
+        margin: 0 10px;
+      }
+
+      .safe
+      {
+        background-color: #00ff00;
+        color: #000000;
+        margin: 0 10px;
+      }
+    }
+  }
+}

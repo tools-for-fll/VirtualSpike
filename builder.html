@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2025 Brian Kircher
+
+Open Source Software: you can modify and/or share it under the terms of the BSD
+license file in the root directory of this project.
+-->
+<html lang="en_US">
+  <head>
+    <title>VirtualSpike - Field Builder</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="builder.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="importmap">
+    {
+      "imports":
+      {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script type="module" src="builder.js"></script>
+  </head>
+  <body>
+    <div class="frame">
+      <div id="controls">
+        <label>VirtualSpike - Field Builder</label>
+        <span>&#8203;</span>
+        <button id="btn_import" title="Import Field">
+          <i class="fa fa-upload"></i>
+        </button>
+        <button id="btn_export" title="Export Field">
+          <i class="fa fa-download"></i>
+        </button>
+        <span>&#8203;</span>
+        <button id="btn_overhead" title="Overhead View">
+          <img src="images/overhead.png" />
+        </button>
+        <button id="btn_perspective" title="Perspective View">
+          <img src="images/perspective.png" />
+        </button>
+        <span>&#8203;</span>
+        <button id="btn_reset", title="Reset the Field">
+          <i class="fa fa-refresh"></i>
+        </button>
+        <button id="btn_mat" title="Add Field Image">
+          <i class="fa fa-map"></i>
+        </button>
+        <button id="btn_model" title="Add Field Model">
+          <i class="fa fa-map-pin"></i>
+        </button>
+        <span>&#8203;</span>
+      </div>
+      <div id="field">
+      </div>
+      <div id="footer" class="disable">
+        <span id="filename">&lt;None Selected&gt;</span>
+        <span id="comment">
+          <label for="comment2">Comment:&nbsp;</label>
+          <input id="comment2" type="text" disabled>
+        </span>
+        <span id="game_piece">
+          <label for="game_piece2">Game Piece?&nbsp;</label>
+          <input id="game_piece2" type="checkbox" disabled>
+        </span>
+      </div>
+    </div>
+    <dialog id="load_mat">
+      <span class="heading">
+        Load Mat Image
+      </span>
+      <hr>
+      <span>
+      <label>Image:</label>
+      <span id="mat_file_input"></span>
+      </span>
+      <br>
+      <br>
+      <label>Width (in):</label>
+      <input id="mat_width" type="text" />
+      <br>
+      <br>
+      <label>Height (in):</label>
+      <input id="mat_height" type="text" />
+      <br>
+      <br>
+      <button id="btn_load">Load</button>
+      <button id="btn_cancel">Cancel</button>
+    </dialog>
+    <dialog id="load_file">
+      <span class="heading">
+        Select files
+      </span>
+      <hr>
+      <div id="files"></div>
+      <br>
+      <button id="btn_load">Load</button>
+      <button id="btn_cancel">Cancel</button>
+    </dialog>
+    <dialog id="loading">
+      <span class="heading">
+        Loading...
+      </span>
+    </dialog>
+    <dialog id="alert">
+      <div>
+        <span id="message"></span>
+        <div id="buttons">
+          <button id="ok">OK</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="confirm">
+      <div>
+        <span id="message"></span>
+        <div id="buttons">
+          <button id="cancel">Cancel</button>
+          <button id="ok">OK</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="load_progress">
+      <span>
+        Loading...
+      </span>
+    </dialog>
+  </body>
+</html>
