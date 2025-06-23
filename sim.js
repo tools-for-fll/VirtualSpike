@@ -173,6 +173,7 @@ export function
 pause()
 {
   paused = true;
+  previousTime = 0;
 }
 
 /**

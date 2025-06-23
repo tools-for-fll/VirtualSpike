@@ -100,6 +100,8 @@ init()
                                   return(availablePackages[packageName]);
                                 });
 
+  $(window).on("blur", onBlur);
+  $(window).on("focus", onFocus);
   $(document).on("keydown", onKeyDown);
   $(window).on("resize", onResize);
 
@@ -824,6 +826,30 @@ onMouseUp(e)
 {
   vsizerDown = false;
   hsizerDown = false;
+}
+
+function
+onBlur()
+{
+  let button = $("#btn_playpause i");
+
+  if(button.hasClass("fa-pause"))
+  {
+    button.addClass("blur-pause");
+    btnPlayPause();
+  }
+}
+
+function
+onFocus()
+{
+  let button = $("#btn_playpause i");
+
+  if(button.hasClass("blur-pause"))
+  {
+    button.removeClass("blur-pause");
+    btnPlayPause();
+  }
 }
 
 function
