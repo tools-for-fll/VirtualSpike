@@ -33,10 +33,12 @@ let context = null;
 
 const scope =
 {
+  False: false,
   __name__: "__main__",
   print: consolePrint,
   range: range,
-  simDone: simDone
+  simDone: simDone,
+  True: true
 };
 
 $(init);
